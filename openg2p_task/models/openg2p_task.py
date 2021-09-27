@@ -108,3 +108,6 @@ class Openg2pTask(models.Model):
 
     # created_date of this entity = create_date
     # lastmodifiedby_date of this entity = write_date
+
+    def create_task_from_notification(self, event_code, obj):
+        pass

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ODK -->
+        <record id="task_type_odk" model="openg2p.task.type">
+            <field name="name">ODK</field>
+        </record>
+
+        <record id="task_role_odk_officer" model="openg2p.task.role">
+            <field name="task_type_id" ref="task_type_odk"/>
+            <field name="name">ODK Officer</field>
+            <field name="assignee_role_id">1</field>
+        </record>
+        <record id="task_subtype_odk_create_config" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_odk"/>
+            <field name="name">Create Configuration</field>
+            <field name="role_id" ref="task_role_odk_officer"/>
+        </record>
+        <record id="task_subtype_odk_update_config" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_odk"/>
+            <field name="name">Update Configuration</field>
+            <field name="role_id" ref="task_role_odk_officer"/>
+        </record>
+
+        <record id="task_role_odk_pull_officer" model="openg2p.task.role">
+            <field name="task_type_id" ref="task_type_odk"/>
+            <field name="name">ODK Pull Officer</field>
+            <field name="assignee_role_id">1</field>
+        </record>
+        <record id="task_subtype_odk_pull" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_odk"/>
+            <field name="name">Pull Registrations from Data Collection Source</field>
+            <field name="role_id" ref="task_role_odk_pull_officer"/>
+        </record>
+
+
+        <!-- Registration -->
+        <record id="task_type_regd" model="openg2p.task.type">
+            <field name="name">Registration</field>
+        </record>
+
+        <record id="task_role_regd_officer" model="openg2p.task.role">
+            <field name="task_type_id" ref="task_type_regd"/>
+            <field name="name">Registration Officer</field>
+            <field name="assignee_role_id">1</field>
+        </record>
+        <record id="task_subtype_regd_create" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_regd"/>
+            <field name="name">Create Registration</field>
+            <field name="role_id" ref="task_role_regd_officer"/>
+        </record>
+        <record id="task_subtype_regd_update" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_regd"/>
+            <field name="name">Update Registration</field>
+            <field name="role_id" ref="task_role_regd_officer"/>
+        </record>
+        <record id="task_subtype_regd_change_stage" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_regd"/>
+            <field name="name">Change Registration Stage</field>
+            <field name="role_id" ref="task_role_regd_officer"/>
+        </record>
+        <record id="task_subtype_regd_make_beneficiary" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_regd"/>
+            <field name="name">Convert Registrations to Beneficiaries</field>
+            <field name="role_id" ref="task_role_regd_officer"/>
+        </record>
+
+        <!-- Beneficiary -->
+        <record id="task_type_beneficiary" model="openg2p.task.type">
+            <field name="name">Beneficiary</field>
+        </record>
+
+        <record id="task_role_beneficiary_officer" model="openg2p.task.role">
+            <field name="task_type_id" ref="task_type_beneficiary"/>
+            <field name="name">Beneficiary Officer</field>
+            <field name="assignee_role_id">1</field>
+        </record>
+        <record id="task_subtype_beneficiary_create" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_beneficiary"/>
+            <field name="name">Create Beneficiary</field>
+            <field name="role_id" ref="task_role_beneficiary_officer"/>
+        </record>
+        <record id="task_subtype_beneficiary_update" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_beneficiary"/>
+            <field name="name">Update Beneficiary</field>
+            <field name="role_id" ref="task_role_beneficiary_officer"/>
+        </record>
+        <record id="task_subtype_beneficiary_enroll_programs" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_beneficiary"/>
+            <field name="name">Enroll Beneficiaries into Program</field>
+            <field name="role_id" ref="task_role_beneficiary_officer"/>
+        </record>
+        <record id="task_subtype_beneficiary_make_transaction" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_beneficiary"/>
+            <field name="name">Made Transaction</field>
+            <field name="role_id" ref="task_role_beneficiary_officer"/>
+        </record>
+
+        <!-- Disbursement -->
+        <record id="task_type_disbursement" model="openg2p.task.type">
+            <field name="name">Disbursement</field>
+        </record>
+
+        <record id="task_role_disbursement_officer" model="openg2p.task.role">
+            <field name="task_type_id" ref="task_type_disbursement"/>
+            <field name="name">Disbursement Officer</field>
+            <field name="assignee_role_id">1</field>
+        </record>
+        <record id="task_subtype_disbursement_create_batch" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_disbursement"/>
+            <field name="name">Create Disbursement Batch</field>
+            <field name="role_id" ref="task_role_disbursement_officer"/>
+        </record>
+        <record id="task_subtype_disbursement_update_batch" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_disbursement"/>
+            <field name="name">Update Disbursement Batch</field>
+            <field name="role_id" ref="task_role_disbursement_officer"/>
+        </record>
+        <record id="task_subtype_disbursement_create_single" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_disbursement"/>
+            <field name="name">Create Disbursement Single</field>
+            <field name="role_id" ref="task_role_disbursement_officer"/>
+        </record>
+        <record id="task_subtype_disbursement_update_single" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_disbursement"/>
+            <field name="name">Update Disbursement Single</field>
+            <field name="role_id" ref="task_role_disbursement_officer"/>
+        </record>
+        <record id="task_subtype_disbursement_approve_payment_list" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_disbursement"/>
+            <field name="name">Approve Payment List</field>
+            <field name="role_id" ref="task_role_disbursement_officer"/>
+        </record>
+        <record id="task_subtype_disbursement_send_payment_list" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_disbursement"/>
+            <field name="name">Send Payment List</field>
+            <field name="role_id" ref="task_role_disbursement_officer"/>
+        </record>
+        <record id="task_subtype_disbursement_review_settlement_report" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_disbursement"/>
+            <field name="name">Review Settlement Report</field>
+            <field name="role_id" ref="task_role_disbursement_officer"/>
+        </record>
+        <record id="task_subtype_disbursement_complete_reconciliation" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_disbursement"/>
+            <field name="name">Complete Reconciliation</field>
+            <field name="role_id" ref="task_role_disbursement_officer"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,6 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="0">
+        <!-- Task Stages -->
+        <record id="task_status_available" model="openg2p.task.status">
+            <field name="name">Available</field>
+        </record>
+        <record id="task_status_todo" model="openg2p.task.status">
+            <field name="name">To-Do</field>
+        </record>
+        <record id="task_status_done" model="openg2p.task.status">
+            <field name="name">Done</field>
+        </record>
+
+        <!-- OpenG2P General -->
+        <record id="task_type_general" model="openg2p.task.type">
+            <field name="name">OpenG2P General</field>
+        </record>
+
+        <record id="task_role_openg2p_officer" model="openg2p.task.role">
+            <field name="task_type_id" ref="task_type_general"/>
+            <field name="name">OpenG2P Officer</field>
+            <field name="assignee_role_id">1</field>
+        </record>
+        <record id="task_subtype_create_program" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_general"/>
+            <field name="name">Create Program</field>
+            <field name="role_id" ref="task_role_openg2p_officer"/>
+        </record>
+        <record id="task_subtype_update_program" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_general"/>
+            <field name="name">Update Program</field>
+            <field name="role_id" ref="task_role_openg2p_officer"/>
+        </record>
+        <record id="task_subtype_create_program_category" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_general"/>
+            <field name="name">Create Program Category</field>
+            <field name="role_id" ref="task_role_openg2p_officer"/>
+        </record>
+        <record id="task_subtype_update_program_category" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_general"/>
+            <field name="name">Update Program Category</field>
+            <field name="role_id" ref="task_role_openg2p_officer"/>
+        </record>
 
         <!-- ODK -->
         <record id="task_type_odk" model="openg2p.task.type">
@@ -91,9 +132,14 @@
             <field name="name">Enroll Beneficiaries into Program</field>
             <field name="role_id" ref="task_role_beneficiary_officer"/>
         </record>
-        <record id="task_subtype_beneficiary_make_transaction" model="openg2p.task.subtype">
+        <record id="task_subtype_beneficiary_create_transaction_batch" model="openg2p.task.subtype">
             <field name="task_type_id" ref="task_type_beneficiary"/>
-            <field name="name">Made Transaction</field>
+            <field name="name">Make Batch Transaction</field>
+            <field name="role_id" ref="task_role_beneficiary_officer"/>
+        </record>
+        <record id="task_subtype_beneficiary_create_transaction_single" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_beneficiary"/>
+            <field name="name">Make Single Transactions</field>
             <field name="role_id" ref="task_role_beneficiary_officer"/>
         </record>
 
@@ -106,6 +152,11 @@
             <field name="task_type_id" ref="task_type_disbursement"/>
             <field name="name">Disbursement Officer</field>
             <field name="assignee_role_id">1</field>
+        </record>
+        <record id="task_subtype_disbursement_create_batch_from_file" model="openg2p.task.subtype">
+            <field name="task_type_id" ref="task_type_disbursement"/>
+            <field name="name">Create Disbursement Batch From file</field>
+            <field name="role_id" ref="task_role_disbursement_officer"/>
         </record>
         <record id="task_subtype_disbursement_create_batch" model="openg2p.task.subtype">
             <field name="task_type_id" ref="task_type_disbursement"/>
@@ -127,14 +178,9 @@
             <field name="name">Update Disbursement Single</field>
             <field name="role_id" ref="task_role_disbursement_officer"/>
         </record>
-        <record id="task_subtype_disbursement_approve_payment_list" model="openg2p.task.subtype">
+        <record id="task_subtype_disbursement_approve_send_disbursement_list" model="openg2p.task.subtype">
             <field name="task_type_id" ref="task_type_disbursement"/>
-            <field name="name">Approve Payment List</field>
-            <field name="role_id" ref="task_role_disbursement_officer"/>
-        </record>
-        <record id="task_subtype_disbursement_send_payment_list" model="openg2p.task.subtype">
-            <field name="task_type_id" ref="task_type_disbursement"/>
-            <field name="name">Send Payment List</field>
+            <field name="name">Approve and Send Disbursement List</field>
             <field name="role_id" ref="task_role_disbursement_officer"/>
         </record>
         <record id="task_subtype_disbursement_review_settlement_report" model="openg2p.task.subtype">

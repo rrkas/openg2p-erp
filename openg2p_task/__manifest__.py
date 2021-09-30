@@ -7,6 +7,7 @@
     "depends": [],
     "description": "",
     "data": [
+        "views/openg2p_task_status.xml",
         "views/openg2p_task_role.xml",
         "views/openg2p_task_type.xml",
         "views/openg2p_task_subtype.xml",

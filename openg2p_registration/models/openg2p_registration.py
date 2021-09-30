@@ -715,6 +715,7 @@ class Registration(models.Model):
         res.sudo().with_delay().ensure_unique(
             mode=MATCH_MODE_COMPREHENSIVE
         )  # let's queue uniqueness check
+        self.env["openg2p.task"].create_task_from_notification("regd_create", res.id)
         return res
 
     @api.multi
@@ -767,6 +768,7 @@ class Registration(models.Model):
                 res = super(Registration, self).write(vals)
         else:
             res = super(Registration, self).write(vals)
+        self.env["openg2p.task"].create_task_from_notification("regd_update", self.id)
         return res
 
     @api.multi
@@ -895,7 +897,9 @@ class Registration(models.Model):
 
         # Indexing the beneficiary
         self.index_beneficiary()
-
+        self.env["openg2p.task"].create_task_from_notification(
+            "regd_to_beneficiary", beneficiary.id
+        )
         return {
             "type": "ir.actions.act_window",
             "view_type": "form",

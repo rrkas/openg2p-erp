@@ -4,6 +4,7 @@ from odoo import models, fields, api
 class Openg2pTask(models.Model):
     _name = "openg2p.task"
     _description = "Task Management for OpenG2P"
+    _order = "id desc"
 
     type_id = fields.Many2one(
         "openg2p.task.type",
@@ -16,7 +17,7 @@ class Openg2pTask(models.Model):
     subtype_id = fields.Many2one("openg2p.task.subtype", string="Task Subtype")
 
     # for building url
-    entity_type_id = fields.Integer(
+    entity_type_id = fields.Char(
         string="Entity Type",
     )
 
@@ -45,12 +46,10 @@ class Openg2pTask(models.Model):
 
     target_url = fields.Char(string="Target URL")
 
-    status = fields.Selection(
-        selection=(
-            ("todo", "To-Do"),
-            ("done", "Done"),
-        ),
+    status_id = fields.Many2one(
+        "openg2p.task.status",
         string="Task Status",
+        group_expand="_read_group_status_ids",
     )
 
     createdby_id = fields.Many2one(
@@ -77,7 +76,7 @@ class Openg2pTask(models.Model):
                 "task_id": self.id,
                 "task_type_id": self.type_id.id,
                 "task_subtype_id": self.subtype_id.id,
-                "task_status": self.status,
+                "task_status_id": self.status_id.id,
                 "task_entity_type_id": self.entity_type_id,
                 "task_entity_id": self.entity_id,
                 "task_assignee_id": self.assignee_id.id,
@@ -101,13 +100,33 @@ class Openg2pTask(models.Model):
         return res
 
     def name_get(self):
-        return [
-            (rec.id, f"{rec.type_id.name}/{rec.subtype_id.name} ({rec.id})")
-            for rec in self
-        ]
+        for rec in self:
+            yield rec.id, f"{rec.type_id.name}/{rec.subtype_id.name} ({rec.id})"
 
     # created_date of this entity = create_date
     # lastmodifiedby_date of this entity = write_date
 
-    def create_task_from_notification(self, event_code, obj):
-        pass
+    def create_task_from_notification(self, event_code, entity_id):
+        model_ext_id = "openg2p_task"
+        from .task_mapping import event_map
+
+        curr_event = event_map.get(event_code)
+        curr_type_id = self.env.ref(f"{model_ext_id}.{curr_event.type_ref}").id
+        curr_subtype_id = self.env.ref(f"{model_ext_id}.{curr_event.subtype_ref}").id
+        curr_status_id = self.env.ref(
+            f"{model_ext_id}.{curr_event.default_status_ref}"
+        ).id
+        self.create(
+            {
+                "type_id": curr_type_id,
+                "subtype_id": curr_subtype_id,
+                "entity_type_id": curr_event.entity_type,
+                "entity_id": entity_id,
+                "status_id": curr_status_id,
+                "target_url": f"http://localhost:8069/web?debug=true#id={entity_id}&model={curr_event.entity_type}",
+            }
+        )
+
+    @api.model
+    def _read_group_status_ids(self, status, domain, order):
+        return self.env["openg2p.task.status"].search([])

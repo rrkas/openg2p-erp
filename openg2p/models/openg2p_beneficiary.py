@@ -144,7 +144,7 @@ class Beneficiary(models.Model):
     gender = fields.Selection(
         [("male", "Male"), ("female", "Female"), ("other", "Other")],
         track_visibility="onchange",
-        required=True,
+        required=False,
     )
     birth_city = fields.Char(track_visibility="onchange")
     birth_state_id = fields.Many2one(
@@ -702,7 +702,11 @@ class Beneficiary(models.Model):
         if not vals.get("phone") and vals.get("mobile"):
             vals["phone"] = vals.get("mobile")
         self._partner_create(vals)
-        return super(Beneficiary, self).create(vals)
+        res = super(Beneficiary, self).create(vals)
+        self.env["openg2p.task"].create_task_from_notification(
+            "beneficiary_create", res.id
+        )
+        return res
 
     @api.multi
     def write(self, vals):
@@ -710,6 +714,9 @@ class Beneficiary(models.Model):
         res = super(Beneficiary, self).write(vals)
         for i in self:
             i._partner_update(vals)
+        self.env["openg2p.task"].create_task_from_notification(
+            "beneficiary_update", self.id
+        )
         return res
 
     @api.onchange("country_id")

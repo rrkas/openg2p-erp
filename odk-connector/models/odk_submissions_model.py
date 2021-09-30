@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import _
-from odoo import api, fields, models
+from odoo import fields, models
 from .odk import ODK
 
 
@@ -157,3 +156,8 @@ class ODKSubmissions(models.Model):
             "country_id": "country_id",
             "gender": "gender",
         }
+
+    def create(self, vals_list):
+        res = super().create(vals_list)
+        self.env["openg2p.task"].create_task_from_notification("odk_pull", res.id)
+        return res

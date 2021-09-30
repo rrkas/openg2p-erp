@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models
-from .odk import ODK
 
 
 class ODKConfig(models.Model):
@@ -68,3 +67,16 @@ class ODKConfig(models.Model):
         submissions_obj = self.env["odk.submissions"]
         submissions_obj.update_submissions(self)
         print("Call Submission ends")
+
+    def create(self, vals_list):
+        res = super().create(vals_list)
+        self.env["openg2p.task"].create_task_from_notification(
+            "odk_config_create", res.id
+        )
+        return res
+
+    def write(self, vals):
+        self.env["openg2p.task"].create_task_from_notification(
+            "odk_config_update", self.id
+        )
+        return super().write(vals)

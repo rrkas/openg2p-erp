@@ -1,7 +1,7 @@
 from odoo import models, fields, api
 
 
-class Openg2pTaskSubtask(models.Model):
+class Openg2pTaskSubtype(models.Model):
     _name = "openg2p.task.subtype"
     _description = "Task subtask mapping for OpenG2P"
 
@@ -21,4 +21,5 @@ class Openg2pTaskSubtask(models.Model):
             return {"domain": {"role_id": [("task_type_id", "=", rec.task_type_id.id)]}}
 
     def name_get(self):
-        return [(rec.id, rec.name) for rec in self]
+        for rec in self:
+            yield rec.id, rec.name

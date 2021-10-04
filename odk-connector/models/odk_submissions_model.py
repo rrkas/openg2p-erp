@@ -42,18 +42,21 @@ class ODKSubmissions(models.Model):
         )
         print("Successfully update config:", config)
 
-    # Method responsible for getting new data from ODK
-    def get_data_from_odk(self, odk_config):
+    def get_count_response(self, odk_config):
         odk = ODK(
             odk_config.odk_endpoint,
             "submission",
             odk_config.odk_email,
             odk_config.odk_password,
         )
-        count_response = odk.get(
+        return odk.get(
             (odk_config.odk_project_id, odk_config.odk_form_id),
             {"$top": 0, "$count": "true"},
         )  # Call ODK API for new count
+
+    # Method responsible for getting new data from ODK
+    def get_data_from_odk(self, odk_config):
+        count_response = self.get_count_response(odk_config)
 
         last_count = odk_config.odk_submissions_count
         new_count = count_response["@odata.count"]
@@ -156,8 +159,3 @@ class ODKSubmissions(models.Model):
             "country_id": "country_id",
             "gender": "gender",
         }
-
-    def create(self, vals_list):
-        res = super().create(vals_list)
-        self.env["openg2p.task"].create_task_from_notification("odk_pull", res.id)
-        return res

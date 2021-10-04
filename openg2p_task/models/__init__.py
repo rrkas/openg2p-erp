@@ -4,3 +4,6 @@ from . import openg2p_task_subtype
 from . import openg2p_task
 from . import openg2p_task_history
 from . import openg2p_task_status
+from . import openg2p_workflow_stage
+from . import openg2p_workflow_type
+from . import openg2p_workflow

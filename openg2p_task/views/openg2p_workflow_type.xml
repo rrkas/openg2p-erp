@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Form View -->
+        <record model="ir.ui.view" id="openg2p_workflow_type_form_view">
+            <field name="name">openg2p.workflow.type.form</field>
+            <field name="model">openg2p.workflow.type</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="name" string="Name"/>
+                            <field name="stages" string="Stages"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record model="ir.ui.view" id="openg2p_workflow_type_tree_view">
+            <field name="name">openg2p.workflow.type.tree</field>
+            <field name="model">openg2p.workflow.type</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" string="Name"/>
+                    <field name="stage_count" string="Number of Stages"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Kanban View -->
+        <record model="ir.ui.view" id="openg2p_workflow_type_kanban_view">
+            <field name="name">openg2p.workflow.type.kanban</field>
+            <field name="model">openg2p.workflow.type</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_registration">
+                    <field name="name"/>
+                    <field name="stage_count"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <div>
+                                        <field name="name"/>
+                                    </div>
+                                    <div>
+                                        <field name="stage_count"/> Stages
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+    </data>
+</odoo>

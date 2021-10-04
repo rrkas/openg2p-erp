@@ -8,6 +8,7 @@ from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models, _
+from odoo.addons.queue_job.job import job, related_action
 from odoo.exceptions import UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
@@ -111,6 +112,7 @@ class SingleTransaction(models.Model):
     @api.depends("bank_account_id")
     def _compute_acc_holder_name(self):
         for rec in self:
+
             rec.acc_holder_name = (
                 rec.bank_account_id.acc_holder_name
                 or rec.bank_account_id.beneficiary_id.name
@@ -175,16 +177,3 @@ class SingleTransaction(models.Model):
         for rec in self:
             if not rec.request_id:
                 rec.request_id = uuid.uuid4().hex
-
-    def create(self, vals_list):
-        res = super().create(vals_list)
-        self.env["openg2p.task"].create_task_from_notification(
-            "beneficiary_transaction_single_create", res.id
-        )
-        return res
-
-    def write(self, vals):
-        self.env["openg2p.task"].create_task_from_notification(
-            "beneficiary_transaction_single_update", self.id
-        )
-        return super().write(vals)

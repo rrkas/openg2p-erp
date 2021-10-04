@@ -1,7 +1,7 @@
 from odoo import models, fields
 
 
-class Openg2pWorkflowStage(models.Model):
+class Openg2pWorkflow(models.Model):
     _name = "openg2p.workflow"
     _description = "Workflows for OpenG2P Tasks"
 

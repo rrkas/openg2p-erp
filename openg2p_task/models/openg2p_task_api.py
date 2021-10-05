@@ -1,13 +1,13 @@
 from odoo import fields
 from odoo.http import Controller, route, request
 
+
 # getTaskById
 # getSubTaskForTaskId
 # getTaskByProcess
 # getTasksforUser
 # getTasksforRole
-# createTask with stateTransition commands - reassign, changeRole, suspend, close, unassign, approve, reject, changeProgram
-# bulkReassign, bulkunassign
+# createTask with stateTransition commands - reassign, changeRole, suspend, close, unassign, approve, reject, changeProgram,bulkReassign, bulkunassign
 
 class Openg2pTaskApi(Controller):
 
@@ -22,7 +22,7 @@ class Openg2pTaskApi(Controller):
                     "status": 200,
                     "message": "Success",
                     "id": id,
-                    "task details": task.api_json()
+                    "task_details": task.api_json()
                 }
             else:
                 return {
@@ -34,7 +34,7 @@ class Openg2pTaskApi(Controller):
             return {
                 "status": 400,
                 "id": id,
-                "error": print(e)
+                "error": str(e)
             }
 
     @route("/sub-task/<int:id>", type="json", auth="user", methods=["GET"])
@@ -64,7 +64,7 @@ class Openg2pTaskApi(Controller):
             return {
                 "status": 400,
                 "id": id,
-                "error": print(e)
+                "error": str(e)
             }
 
     @route("/process/<int:id>", type="json", auth="user", methods=["GET"])
@@ -90,7 +90,7 @@ class Openg2pTaskApi(Controller):
             return {
                 "status": 400,
                 "id": id,
-                "error": print(e)
+                "error": str(e)
             }
 
     @route("/tasks/user/<int:id>", type="json", auth="user", methods=["GET"])
@@ -121,7 +121,7 @@ class Openg2pTaskApi(Controller):
             return {
                 "status": 400,
                 "user-id": id,
-                "error": print(e)
+                "error": str(e)
             }
 
     @route("/tasks/role/<int:id>", type="json", auth="user", methods=["GET"])
@@ -152,5 +152,5 @@ class Openg2pTaskApi(Controller):
             return {
                 "status": 400,
                 "role-id": id,
-                "error": print(e)
+                "error": str(e)
             }

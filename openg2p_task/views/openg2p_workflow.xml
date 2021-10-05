@@ -10,6 +10,7 @@
                 <form>
                     <group>
                         <group>
+<!--                            <field name="name" string="Workflow Name"/>-->
                             <field name="workflow_type" string="Workflow Type"/>
                             <field name="curr_workflow_stage" string="Current Workflow Stage"/>
                             <field name="workflow_completed" string="Workflow Completed"/>
@@ -25,6 +26,7 @@
             <field name="model">openg2p.workflow</field>
             <field name="arch" type="xml">
                 <tree>
+<!--                    <field name="name"/>-->
                     <field name="workflow_type"/>
                     <field name="curr_workflow_stage"/>
                     <field name="workflow_completed"/>
@@ -38,6 +40,7 @@
             <field name="model">openg2p.workflow</field>
             <field name="arch" type="xml">
                 <kanban class="o_kanban_registration">
+<!--                    <field name="name"/>-->
                     <field name="workflow_type"/>
                     <field name="curr_workflow_stage"/>
                     <field name="workflow_completed"/>
@@ -48,9 +51,12 @@
                                     <div class="o_kanban_record_top">
                                         <div class="o_kanban_record_headings">
                                             <strong class="o_kanban_record_title">
-                                                <field name="workflow_type"/>
+<!--                                                <field name="name"/>-->
                                             </strong>
                                         </div>
+                                    </div>
+                                    <div>
+                                        <field name="workflow_type"/>
                                     </div>
                                     <div>
                                         <field name="curr_workflow_stage"/>

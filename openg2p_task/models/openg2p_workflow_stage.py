@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields
 
 
 class Openg2pWorkflowStage(models.Model):
@@ -18,3 +18,9 @@ class Openg2pWorkflowStage(models.Model):
     failure_task_subtype = fields.Many2one(
         "openg2p.task.subtype", string="Failure Task Subtype"
     )
+
+    workflow_type_id = fields.Many2one("openg2p.workflow.type")
+
+    def name_get(self):
+        for rec in self:
+            yield rec.id, f"{rec.workflow_type_id.name} / {rec.curr_task_subtype.id}"

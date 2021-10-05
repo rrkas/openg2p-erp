@@ -14,7 +14,7 @@
                             <field name="subtype_id" string="Task Subtype"/>
                             <field name="description" string="Description"/>
                             <field name="context" string="Context"/>
-                            <field name="workflow_pid" string="Workflow Pid"/>
+                            <field name="workflow_id" string="Workflow Pid"/>
                             <field name="target_url" string="Target URL"/>
                             <field name="assignee_id" string="Assignee"/>
                             <field name="lastmodifiedby_id" string="Last modified by"/>
@@ -39,7 +39,7 @@
             <field name="name">openg2p.task.tree</field>
             <field name="model">openg2p.task</field>
             <field name="arch" type="xml">
-                <tree edit="0" delete="0" import="0">
+                <tree edit="0" import="0">
                     <field name="subtype_id"/>
                     <field name="assignee_id"/>
                     <field name="status_id"/>

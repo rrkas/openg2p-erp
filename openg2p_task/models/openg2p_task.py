@@ -40,7 +40,7 @@ class Openg2pTask(models.Model):
         default=lambda self: self.env.uid,
     )
 
-    workflow_pid = fields.Integer(string="Workflow Process")
+    workflow_id = fields.Integer(string="Workflow Process")
 
     description = fields.Text(string="Description")
 
@@ -95,8 +95,8 @@ class Openg2pTask(models.Model):
     @api.model
     def write(self, vals):
         res = super(Openg2pTask, self).write(vals)
-        if res:
-            self._create_history()
+        # if res:
+        #     self._create_history()
         return res
 
     def name_get(self):
@@ -123,7 +123,7 @@ class Openg2pTask(models.Model):
                 "entity_type_id": curr_event.entity_type,
                 "entity_id": entity_id,
                 "status_id": curr_status_id,
-                "target_url": f"http://localhost:8069/web?debug=true#id={entity_id}&model={curr_event.entity_type}",
+                "target_url": f"http://localhost:8069/web#id={entity_id}&model={curr_event.entity_type}",
             }
         )
 

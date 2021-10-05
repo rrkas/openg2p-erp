@@ -715,6 +715,7 @@ class Registration(models.Model):
         res.sudo().with_delay().ensure_unique(
             mode=MATCH_MODE_COMPREHENSIVE
         )  # let's queue uniqueness check
+        self.env["openg2p.workflow"].handle_tasks("regd_create", res)
         return res
 
     @api.multi

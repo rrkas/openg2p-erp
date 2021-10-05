@@ -133,15 +133,16 @@ class Openg2pTask(models.Model):
 
     def api_json(self):
         return {
-            "assignee_id": self.assignee_id,
+            "id": self.id,
+            "assignee_id": self.assignee_id.id,
             "description": self.description,
             "context": self.context,
             "target_url": self.target_url,
-            "created_by_id": self.createdby_id,
-            "last_modified_by_id": self.lastmodifiedby_id,
-            "status_id": self.status_id,
-            "task_type": self.type_id,
-            "entity_type": self.entity_type_id,
-            "entity_type_id": self.entity_id.type,
+            "created_by_id": self.createdby_id.id,
+            "last_modified_by_id": self.lastmodifiedby_id.id,
+            "status_id": self.status_id.id,
+            "task_type": self.type_id.id,
+            "entity_type": self.entity_type_id.id,
+            "entity_type_id": self.entity_id.id,
             "estimated_time_allotment": self.eta,
         }

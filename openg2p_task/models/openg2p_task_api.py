@@ -11,6 +11,34 @@ from odoo.http import Controller, route, request
 
 class Openg2pTaskApi(Controller):
 
+    @route("/tasks", type="json", auth="user", methods=["GET"])
+    def all_tasks(self):
+        try:
+            task = request.env["openg2p.task"].search([])
+
+            tasks_all = []
+            for t in task:
+                tasks_all.append(t.api_json())
+
+            if len(task) > 0:
+                return {
+                    "status": 200,
+                    "message": "Success",
+                    "id": id,
+                    "task_details": tasks_all
+                }
+            else:
+                return {
+                    "status": 404,
+                    "id": id,
+                    "error": "No tasks exists",
+                }
+        except BaseException as e:
+            return {
+                "status": 400,
+                "error": str(e)
+            }
+
     @route("/task/<int:id>", type="json", auth="user", methods=["GET"])
     def get_task_by_id(self, id):
         try:
@@ -95,7 +123,7 @@ class Openg2pTaskApi(Controller):
 
     @route("/tasks/user/<int:id>", type="json", auth="user", methods=["GET"])
     def get_tasks_for_user(self, id):
-        user_ids = request.env["res,users"].search([("id", "=", id)])
+        user_ids = request.env["res.users"].search([("id", "=", id)])
 
         tasks = []
         try:

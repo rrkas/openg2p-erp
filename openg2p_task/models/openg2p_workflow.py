@@ -18,3 +18,10 @@ class Openg2pWorkflow(models.Model):
     def name_get(self):
         for rec in self:
             yield f"{rec.workflow_type.name} ({rec.id})"
+
+    def api_json(self):
+        return {
+            "workflow-type": self.workflow_type,
+            "current-workflow-stage": self.curr_workflow_stage,
+            "workflow-completed": self.workflow_completed
+        }

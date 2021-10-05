@@ -130,3 +130,19 @@ class Openg2pTask(models.Model):
     @api.model
     def _read_group_status_ids(self, status, domain, order):
         return self.env["openg2p.task.status"].search([])
+
+    def api_json(self):
+        return {
+            "id": self.id,
+            "assignee_id": self.assignee_id.id,
+            "description": self.description,
+            "context": self.context,
+            "target_url": self.target_url,
+            "created_by_id": self.createdby_id.id,
+            "last_modified_by_id": self.lastmodifiedby_id.id,
+            "status_id": self.status_id.id,
+            "task_type": self.type_id.id,
+            "entity_type": self.entity_type_id,
+            "entity_type_id": self.entity_id,
+            "estimated_time_allotment": self.eta,
+        }

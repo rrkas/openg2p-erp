@@ -23,3 +23,10 @@ class Openg2pTaskSubtype(models.Model):
     def name_get(self):
         for rec in self:
             yield rec.id, rec.name
+
+    def api_json(self):
+        return {
+            "task_type": self.task_type_id.id,
+            "name": self.name,
+            "task_role": self.role_id.id,
+        }

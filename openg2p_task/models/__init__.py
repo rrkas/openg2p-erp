@@ -7,3 +7,4 @@ from . import openg2p_task_status
 from . import openg2p_workflow_stage
 from . import openg2p_workflow_type
 from . import openg2p_workflow
+from . import openg2p_task_api

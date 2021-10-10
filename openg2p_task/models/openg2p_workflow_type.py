@@ -27,3 +27,10 @@ class Openg2pWorkflowType(models.Model):
     def _compute_stage_count(self):
         for rec in self:
             rec.stage_count = len(rec.stages)
+
+    def api_json(self):
+        return {
+            "name": self.name,
+            "stages": self.stages.id,
+            "number_of_stages": self.stage_count,
+        }

@@ -768,7 +768,7 @@ class Registration(models.Model):
                 res = super(Registration, self).write(vals)
         else:
             res = super(Registration, self).write(vals)
-        self.env["openg2p.task"].create_task_from_notification("regd_update", self.id)
+        # self.env["openg2p.task"].create_task_from_notification("regd_update", self.id)
         return res
 
     @api.multi

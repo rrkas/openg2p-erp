@@ -97,3 +97,10 @@ class Openg2pWorkflow(models.Model):
                         "workflow_id": task.workflow_id,
                     }
                 )
+
+    def api_json(self):
+        return {
+            "workflow-type": self.workflow_type.id,
+            "current-workflow-stage": self.curr_workflow_stage.id,
+            "workflow-completed": self.workflow_completed,
+        }

@@ -712,9 +712,9 @@ class Beneficiary(models.Model):
         res = super(Beneficiary, self).write(vals)
         for i in self:
             i._partner_update(vals)
-        self.env["openg2p.task"].create_task_from_notification(
-            "beneficiary_update", self.id
-        )
+        # self.env["openg2p.task"].create_task_from_notification(
+        #     "beneficiary_update", self.id
+        # )
         return res
 
     @api.onchange("country_id")

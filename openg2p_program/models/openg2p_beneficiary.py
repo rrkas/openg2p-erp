@@ -47,9 +47,9 @@ class Beneficiary(models.Model):
                     "date_start": date_start,
                 }
             )
-            self.env["openg2p.task"].create_task_from_notification(
-                "beneficiary_enroll", rec.id
-            )
+            # self.env["openg2p.task"].create_task_from_notification(
+            #     "beneficiary_enroll", rec.id
+            # )
         if confirm:
             regs.action_activate()
 

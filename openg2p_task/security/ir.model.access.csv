@@ -5,3 +5,6 @@ access_openg2p_task_subtype,access.openg2p.task.subtype,model_openg2p_task_subty
 access_openg2p_task_type,access.openg2p.task.type,model_openg2p_task_type,,1,1,1,1
 access_openg2p_task,access.openg2p.task,model_openg2p_task,,1,1,1,1
 access_openg2p_task_status,access.openg2p.task.status,model_openg2p_task_status,,1,1,1,1
+access_openg2p_workflow_stage,access.openg2p.workflow.stage,model_openg2p_workflow_stage,,1,1,1,1
+access_openg2p_workflow_type,access.openg2p.workflow.type,model_openg2p_workflow_type,,1,1,1,1
+access_openg2p_workflow,access.openg2p.workflow,model_openg2p_workflow,,1,1,1,1

@@ -38,13 +38,13 @@ class ProgramEnrollmentCategory(models.Model):
 
     def create(self, vals_list):
         res = super().create(vals_list)
-        self.env["openg2p.task"].create_task_from_notification(
-            "program_category_create", res.id
-        )
+        # self.env["openg2p.task"].create_task_from_notification(
+        #     "program_category_create", res.id
+        # )
         return res
 
     def write(self, vals):
-        self.env["openg2p.task"].create_task_from_notification(
-            "program_category_update", self.id
-        )
+        # self.env["openg2p.task"].create_task_from_notification(
+        #     "program_category_update", self.id
+        # )
         return super().write(vals)

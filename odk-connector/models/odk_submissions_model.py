@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import uuid
 
 from odoo import fields, models
 from .odk import ODK
@@ -28,6 +29,7 @@ class ODKSubmissions(models.Model):
         help="Registration linked to the submission.",
         readonly=True,
     )
+    odk_batch_id = fields.Char()
 
     # Method to update/sync submissions from a specific config
     def update_submissions(self, odk_config):
@@ -42,13 +44,7 @@ class ODKSubmissions(models.Model):
         )
         print("Successfully update config:", config)
 
-    def get_count_response(self, odk_config):
-        odk = ODK(
-            odk_config.odk_endpoint,
-            "submission",
-            odk_config.odk_email,
-            odk_config.odk_password,
-        )
+    def get_count_response(self, odk, odk_config):
         return odk.get(
             (odk_config.odk_project_id, odk_config.odk_form_id),
             {"$top": 0, "$count": "true"},
@@ -56,7 +52,15 @@ class ODKSubmissions(models.Model):
 
     # Method responsible for getting new data from ODK
     def get_data_from_odk(self, odk_config):
-        count_response = self.get_count_response(odk_config)
+        odk_batch_id = uuid.uuid4().hex
+
+        odk = ODK(
+            odk_config.odk_endpoint,
+            "submission",
+            odk_config.odk_email,
+            odk_config.odk_password,
+        )
+        count_response = self.get_count_response(odk, odk_config)
 
         last_count = odk_config.odk_submissions_count
         new_count = count_response["@odata.count"]
@@ -73,7 +77,9 @@ class ODKSubmissions(models.Model):
                 (odk_config.odk_project_id, odk_config.odk_form_id),
                 {"$top": top_count, "$skip": skip_count, "$count": "true"},
             )
-            self.save_data_into_all(submission_response["value"], odk_config)
+            self.save_data_into_all(
+                submission_response["value"], odk_config, odk_batch_id
+            )
 
             last_count = last_count + 100
             remaining_count = new_count - last_count
@@ -83,11 +89,13 @@ class ODKSubmissions(models.Model):
                 (odk_config.odk_project_id, odk_config.odk_form_id),
                 {"$top": top_count, "$count": "true"},
             )
-            self.save_data_into_all(submission_response["value"], odk_config)
+            self.save_data_into_all(
+                submission_response["value"], odk_config, odk_batch_id
+            )
         return new_count
 
     # Umbrella method to save data in odk.submissions and openg2p.registration
-    def save_data_into_all(self, odk_response_data, odk_config):
+    def save_data_into_all(self, odk_response_data, odk_config, odk_batch_id):
         for value in odk_response_data:
             # Add check if the record already exists in the database
             existing_object = self.search(
@@ -102,12 +110,15 @@ class ODKSubmissions(models.Model):
                 )
 
             else:
-                registration = self.create_registration_from_submission(value)
+                registration = self.create_registration_from_submission(
+                    value.update({"odk_batch_id": odk_batch_id})
+                )
                 self.odk_create_submissions_data(
                     value,
                     {
                         "odk_config_id": odk_config.id,
                         "odoo_corresponding_id": registration.id,
+                        "odk_batch_id": odk_batch_id,
                     },
                 )
 
@@ -162,5 +173,5 @@ class ODKSubmissions(models.Model):
 
     def create(self, vals_list):
         res = super().create(vals_list)
-        # self.env["openg2p.task"].create_task_from_notification("odk_pull", res.id)
+        self.env["openg2p.workflow"].handle_tasks("odk_pull", res.id)
         return res

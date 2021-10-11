@@ -106,27 +106,6 @@ class Openg2pTask(models.Model):
     # created_date of this entity = create_date
     # lastmodifiedby_date of this entity = write_date
 
-    def create_task_from_notification(self, event_code, entity_id):
-        model_ext_id = "openg2p_task"
-        from .task_mapping import event_map
-
-        curr_event = event_map.get(event_code)
-        curr_type_id = self.env.ref(f"{model_ext_id}.{curr_event.type_ref}").id
-        curr_subtype_id = self.env.ref(f"{model_ext_id}.{curr_event.subtype_ref}").id
-        curr_status_id = self.env.ref(
-            f"{model_ext_id}.{curr_event.default_status_ref}"
-        ).id
-        self.create(
-            {
-                "type_id": curr_type_id,
-                "subtype_id": curr_subtype_id,
-                "entity_type_id": curr_event.entity_type,
-                "entity_id": entity_id,
-                "status_id": curr_status_id,
-                "target_url": f"http://localhost:8069/web#id={entity_id}&model={curr_event.entity_type}",
-            }
-        )
-
     @api.model
     def _read_group_status_ids(self, status, domain, order):
         return self.env["openg2p.task.status"].search([])

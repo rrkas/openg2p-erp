@@ -17,6 +17,13 @@ class Openg2pWorkflow(models.Model):
         string="Workflow completed",
     )
 
+    workflow_context = fields.Text(
+        string="Context",
+    )
+
+    def _update_context(self, event_code, obj, status):
+        pass
+
     @api.model
     def create(self, vals_list):
         res = super().create(vals_list)

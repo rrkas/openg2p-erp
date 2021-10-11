@@ -7,6 +7,7 @@ import copy
 import logging
 import random
 import string
+import uuid
 
 from dateutil.relativedelta import relativedelta
 from odoo.addons.component.core import WorkContext
@@ -346,6 +347,8 @@ class Beneficiary(models.Model):
         compute="_compute_org_fields",
         search="_search_grand_tot",
     )
+
+    odk_batch_id = fields.Char(default=uuid.uuid4)
 
     def api_json(self):
         return {

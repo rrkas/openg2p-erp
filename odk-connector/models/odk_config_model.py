@@ -64,15 +64,15 @@ class ODKConfig(models.Model):
 
     # Method calling submissions call to fetch data
     def call_submission(self):
+        self.env["openg2p.workflow"].handle_tasks(2, self)
         submissions_obj = self.env["odk.submissions"]
         submissions_obj.update_submissions(self)
         print("Call Submission ends")
 
+    @api.model
     def create(self, vals_list):
         res = super().create(vals_list)
-        # self.env["openg2p.task"].create_task_from_notification(
-        #     "odk_config_create", res.id
-        # )
+        self.env["openg2p.workflow"].handle_tasks(1, res)
         return res
 
     def write(self, vals):

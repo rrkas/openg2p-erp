@@ -36,6 +36,7 @@ class Beneficiary(models.Model):
         confirm=False,
         raise_error=True,
     ):
+        self.env["openg2p.workflow"].handle_tasks(4, self)
         # TODO smarter way to check and skip or notify if enrollment exists now it just fails + use savepoints
         regs = self.env["openg2p.program.enrollment"]
         for rec in self:

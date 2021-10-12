@@ -27,14 +27,18 @@ class Openg2pWorkflow(models.Model):
     @api.model
     def create(self, vals_list):
         res = super().create(vals_list)
+        # subtype_obj = self.env["openg2p.task.subtype"].search(
+        #     [("id", "=", self.curr_workflow_stage.curr_task_subtype.id)]
+        # )[0]
         self.env["openg2p.task"].create(
             {
-                "type_id": 8,
-                "subtype_id": 34,
-                "entity_type_id": "openg2p.registration",
+                "type_id": 2,
+                "subtype_id": 5,
+                "entity_type_id": "odk.config",
                 "entity_id": 0,
-                "status_id": 1,
+                "status_id": 2,
                 "workflow_id": res.id,
+                "target_url": "http://localhost:8069/web#action=288&model=odk.config&view_type=list&menu_id=207",
             }
         )
         return res
@@ -43,67 +47,101 @@ class Openg2pWorkflow(models.Model):
         for rec in self:
             yield rec.id, f"{rec.workflow_type.name} ({rec.id})"
 
+    # odk -> conv_ben -> ben_enroll -> batch
     def handle_tasks(self, event_code, obj):
-        if event_code == "regd_create":
-            task = self.env["openg2p.task"].search(
-                [
-                    "&",
-                    ("entity_type_id", "=", "openg2p.registration"),
-                    ("entity_id", "=", 0),
-                ]
+        task = self.env["openg2p.task"].search([("status_id", "=", 2)])
+        # create config
+        if event_code == 1:
+            task.write(
+                {
+                    "entity_id": obj.id,
+                    "status_id": 3,
+                    "target_url": f"http://localhost:8069/web#"
+                    f"id={task.entity_id}&"
+                    f"action=288&"
+                    f"model=odk.config&"
+                    f"view_type=list&menu_id=207",
+                }
             )
-            if task:
-                task.write(
-                    {
-                        "entity_id": obj.id,
-                        "status_id": 3,
-                        "target_url": f"http://localhost:8069/web#id={obj.id}&model=openg2p.registration",
-                    }
-                )
-                self.env["openg2p.task"].create(
-                    {
-                        "type_id": 8,
-                        "subtype_id": 37,
-                        "entity_type_id": "openg2p.beneficiary",
-                        "entity_id": 0,
-                        "status_id": 1,
-                        "workflow_id": task.workflow_id,
-                    }
-                )
-                workflow = self.env["openg2p.workflow"].search(
-                    [("id", "=", task.workflow_id)]
-                )
-                workflow.write(
-                    {
-                        "curr_workflow_stage": workflow.curr_workflow_stage.id + 1,
-                    }
-                )
-        elif event_code == "ben_create":
-            task = self.env["openg2p.task"].search(
-                [
-                    "&",
-                    ("entity_type_id", "=", "openg2p.beneficiary"),
-                    ("entity_id", "=", 0),
-                ]
+            self.env["openg2p.task"].create(
+                {
+                    "type_id": 2,
+                    "subtype_id": 7,
+                    "entity_type_id": "odk.config",
+                    "entity_id": 0,
+                    "status_id": 2,
+                    "workflow_id": task.workflow_id,
+                    "target_url": "http://localhost:8069/web#action=288&model=odk.config&view_type=list&menu_id=207",
+                }
             )
-            if task:
-                task.write(
-                    {
-                        "entity_id": obj.id,
-                        "status_id": 3,
-                        "target_url": f"http://localhost:8069/web#id={obj.id}&model=openg2p.beneficiary",
-                    }
-                )
-                self.env["openg2p.task"].create(
-                    {
-                        "type_id": 9,
-                        "subtype_id": 40,
-                        "entity_type_id": "openg2p.beneficiary",
-                        "entity_id": 0,
-                        "status_id": 1,
-                        "workflow_id": task.workflow_id,
-                    }
-                )
+        # pull odk
+        elif event_code == 2:
+            task.write(
+                {
+                    "entity_id": obj.id,
+                    "status_id": 3,
+                    "target_url": "http://localhost:8069/web#action=288&model=odk.config&view_type=list&menu_id=207",
+                }
+            )
+            self.env["openg2p.task"].create(
+                {
+                    "type_id": 3,
+                    "subtype_id": 11,
+                    "entity_type_id": "openg2p.registration",
+                    "entity_id": 0,
+                    "status_id": 2,
+                    "workflow_id": task.workflow_id,
+                    "target_url": "http://localhost:8069/web#action=184&model=openg2p.registration&view_type=kanban&menu_id=127",
+                }
+            )
+        # regd -> beneficiary
+        elif event_code == 3:
+            task.write(
+                {
+                    "entity_id": obj.id,
+                    "status_id": 3,
+                    "target_url": "http://localhost:8069/web#action=184&model=openg2p.registration&view_type=kanban&menu_id=127",
+                }
+            )
+            self.env["openg2p.task"].create(
+                {
+                    "type_id": 4,
+                    "subtype_id": 14,
+                    "entity_type_id": "openg2p.beneficiary",
+                    "entity_id": 0,
+                    "status_id": 2,
+                    "workflow_id": task.workflow_id,
+                    "target_url": "http://localhost:8069/web#action=155&model=openg2p.beneficiary&view_type=kanban&menu_id=111",
+                }
+            )
+        # enroll beneficiaries
+        elif event_code == 4:
+            task.write(
+                {
+                    "entity_id": obj.id,
+                    "status_id": 3,
+                    "target_url": "http://localhost:8069/web#action=155&model=openg2p.beneficiary&view_type=kanban&menu_id=111",
+                }
+            )
+            self.env["openg2p.task"].create(
+                {
+                    "type_id": 4,
+                    "subtype_id": 15,
+                    "entity_type_id": "openg2p.beneficiary",
+                    "entity_id": 0,
+                    "status_id": 2,
+                    "workflow_id": task.workflow_id,
+                    "target_url": "http://localhost:8069/web#action=155&model=openg2p.beneficiary&view_type=kanban&menu_id=111",
+                }
+            )
+        # workflow = self.env["openg2p.workflow"].search(
+        #     [("id", "=", task.workflow_id)]
+        # )
+        # workflow.write(
+        #     {
+        #         "curr_workflow_stage": workflow.curr_workflow_stage.id + 1,
+        #     }
+        # )
 
     def api_json(self):
         return {

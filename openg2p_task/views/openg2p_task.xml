@@ -26,7 +26,6 @@
                             <field name="write_date" string="Last Modified Date"/>
                         </group>
                         <group string="Technical Details">
-                            <field name="entity_type_id" string="Entity Type"/>
                             <field name="entity_id" string="Entity ID"/>
                         </group>
                     </group>

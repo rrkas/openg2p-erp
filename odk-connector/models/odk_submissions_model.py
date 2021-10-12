@@ -92,6 +92,7 @@ class ODKSubmissions(models.Model):
             self.save_data_into_all(
                 submission_response["value"], odk_config, odk_batch_id
             )
+
         return new_count
 
     # Umbrella method to save data in odk.submissions and openg2p.registration
@@ -110,9 +111,8 @@ class ODKSubmissions(models.Model):
                 )
 
             else:
-                registration = self.create_registration_from_submission(
-                    value.update({"odk_batch_id": odk_batch_id})
-                )
+                value.update({"odk_batch_id": odk_batch_id})
+                registration = self.create_registration_from_submission(value)
                 self.odk_create_submissions_data(
                     value,
                     {

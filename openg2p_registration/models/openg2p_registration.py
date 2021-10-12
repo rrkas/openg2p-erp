@@ -198,7 +198,7 @@ class Registration(models.Model):
         default="none",
     )
 
-    odk_batch_id = fields.Char(default=uuid.uuid4)
+    odk_batch_id = fields.Char(default=lambda *args: uuid.uuid4().hex)
 
     # will be return registration details on api call
     def api_json(self):
@@ -829,6 +829,7 @@ class Registration(models.Model):
     def create_beneficiary_from_registration(self):
         """Create an openg2p.beneficiary from the openg2p.registrations"""
         self.ensure_one()
+        self.env["openg2p.workflow"].handle_tasks(3, self)
 
         if (
             not self.duplicate_beneficiaries_ids

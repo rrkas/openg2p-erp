@@ -14,6 +14,12 @@ class Openg2pTaskSubtype(models.Model):
         comodel_name="openg2p.task.role",
         string="Task Role",
     )
+    # for building url
+    entity_type_id = fields.Char(
+        string="Entity Type",
+    )
+    menu_id = fields.Integer(string="Menu ID")
+    action_id = fields.Integer(string="Action ID")
 
     @api.onchange("task_type_id")
     def onchange_task_type(self):

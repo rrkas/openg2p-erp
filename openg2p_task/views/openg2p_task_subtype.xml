@@ -13,6 +13,9 @@
                             <field name="task_type_id" string="Task Type"/>
                             <field name="name" string="Sub Task Type"/>
                             <field name="role_id" string="Role"/>
+<!--                            <field name="entity_type_id" string="Entity Type ID"/>-->
+<!--                            <field name="menu_id" string="Menu ID"/>-->
+<!--                            <field name="action_id" string="Action ID"/>-->
                         </group>
                     </group>
                 </form>
@@ -28,6 +31,9 @@
                     <field name="task_type_id"/>
                     <field name="name"/>
                     <field name="role_id"/>
+<!--                    <field name="entity_type_id" string="Entity Type ID"/>-->
+<!--                    <field name="menu_id" string="Menu ID"/>-->
+<!--                    <field name="action_id" string="Action ID"/>-->
                 </tree>
             </field>
         </record>

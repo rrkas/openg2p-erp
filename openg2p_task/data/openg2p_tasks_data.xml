@@ -26,6 +26,8 @@
             <field name="task_type_id" ref="task_type_general"/>
             <field name="name">Create Program</field>
             <field name="role_id" ref="task_role_openg2p_officer"/>
+            <field name="entity_type_id">openg2p.program</field>
+            <field name="menu_id" ref="openg2p_program.menu_programs_config"/>
         </record>
         <record id="task_subtype_update_program" model="openg2p.task.subtype">
             <field name="task_type_id" ref="task_type_general"/>

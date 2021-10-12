@@ -348,7 +348,7 @@ class Beneficiary(models.Model):
         search="_search_grand_tot",
     )
 
-    odk_batch_id = fields.Char(default=uuid.uuid4)
+    odk_batch_id = fields.Char(default=lambda *args: uuid.uuid4().hex)
 
     def api_json(self):
         return {

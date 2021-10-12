@@ -9,7 +9,7 @@ class Openg2pTask(models.Model):
     type_id = fields.Many2one(
         "openg2p.task.type",
         store=False,
-        compute="_compute_task_type",
+        compute="_compute_task_details",
         readonly=True,
         string="Task Type",
     )
@@ -44,7 +44,11 @@ class Openg2pTask(models.Model):
 
     description = fields.Text(string="Description")
 
-    target_url = fields.Char(string="Target URL")
+    target_url = fields.Char(
+        string="Target URL",
+        # store=False,
+        # compute="_compute_task_details",
+    )
 
     status_id = fields.Many2one(
         "openg2p.task.status",
@@ -65,9 +69,24 @@ class Openg2pTask(models.Model):
     )
 
     @api.depends("subtype_id")
-    def _compute_task_type(self):
+    def _compute_task_details(self):
         for rec in self:
             rec.type_id = rec.subtype_id.task_type_id.id
+
+            # entity_type_id = rec.subtype_id.entity_type_id
+            # menu_id = rec.subtype_id.menu_id
+            # action_id = rec.subtype_id.action_id
+            # if rec.entity_id:
+            #     rec.target_url = f"http://localhost:8069/web#" \
+            #                      f"id={rec.entity_id}&" \
+            #                      f"action={action_id}&" \
+            #                      f"model={entity_type_id}&" \
+            #                      f"menu_id={menu_id}"
+            # else:
+            #     rec.target_url = f"http://localhost:8069/web#" \
+            #                      f"action={action_id}&" \
+            #                      f"model={entity_type_id}&" \
+            #                      f"menu_id={menu_id}"
 
     @api.multi
     def _create_history(self):
@@ -77,7 +96,7 @@ class Openg2pTask(models.Model):
                 "task_type_id": self.type_id.id,
                 "task_subtype_id": self.subtype_id.id,
                 "task_status_id": self.status_id.id,
-                "task_entity_type_id": self.entity_type_id,
+                "task_entity_type_id": self.subtype_id.entity_type_id,
                 "task_entity_id": self.entity_id,
                 "task_assignee_id": self.assignee_id.id,
                 "task_modifiedby_id": self.lastmodifiedby_id.id,

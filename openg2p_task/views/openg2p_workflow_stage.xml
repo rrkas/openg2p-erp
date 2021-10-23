@@ -1,66 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
-        <!-- Form View -->
-        <record model="ir.ui.view" id="openg2p_workflow_stage_form_view">
-            <field name="name">openg2p.workflow.stage.form</field>
-            <field name="model">openg2p.workflow.stage</field>
-            <field name="arch" type="xml">
-                <form>
-                    <group>
-                        <group>
-                            <field name="curr_task_subtype" string="Current Task Subtype"/>
-                            <field name="success_task_subtype" string="Success Task Subtype"/>
-                            <field name="failure_task_subtype" string="Failure Task Subtype"/>
-                        </group>
-                    </group>
-                </form>
-            </field>
-        </record>
-
         <!-- Tree View -->
         <record model="ir.ui.view" id="openg2p_workflow_stage_tree_view">
             <field name="name">openg2p.workflow.stage.tree</field>
             <field name="model">openg2p.workflow.stage</field>
             <field name="arch" type="xml">
-                <tree>
-                    <field name="curr_task_subtype"/>
-                    <field name="success_task_subtype"/>
-                    <field name="failure_task_subtype"/>
+                <tree create="0" edit="0" delete="0" import="0">
+                    <field name="id"/>
+                    <field name="task_subtype_id"/>
+                    <field name="intermediate"/>
                 </tree>
             </field>
         </record>
-
-        <!-- Kanban View -->
-        <record model="ir.ui.view" id="openg2p_workflow_stage_kanban_view">
-            <field name="name">openg2p.workflow.stage.kanban</field>
-            <field name="model">openg2p.workflow.stage</field>
-            <field name="arch" type="xml">
-                <kanban class="o_kanban_registration">
-                    <field name="curr_task_subtype"/>
-                    <field name="success_task_subtype"/>
-                    <field name="failure_task_subtype"/>
-                    <templates>
-                        <t t-name="kanban-box">
-                            <div class="oe_kanban_global_click">
-                                <div class="oe_kanban_details">
-                                    <div>
-                                        Current: <field name="curr_task_subtype"/>
-                                    </div>
-                                    <div>
-                                        Success: <field name="success_task_subtype"/>
-                                    </div>
-                                    <div>
-                                        Failure: <field name="failure_task_subtype"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </t>
-                    </templates>
-                </kanban>
-            </field>
-        </record>
-
     </data>
 </odoo>

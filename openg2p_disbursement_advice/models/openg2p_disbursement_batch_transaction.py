@@ -166,6 +166,7 @@ class BatchTransaction(models.Model):
             if not rec.request_id:
                 rec.request_id = uuid.uuid4().hex
 
+
     def create_bulk_transfer(self):
         self._generate_uuid()
 
@@ -266,6 +267,7 @@ class BatchTransaction(models.Model):
         except BaseException as e:
             print(e)
 
+    # detailed
     def bulk_transfer_status(self):
         params = (("batchId", str(self.transaction_batch_id)),)
 

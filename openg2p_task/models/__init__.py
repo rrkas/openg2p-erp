@@ -9,3 +9,4 @@ from . import openg2p_workflow_type
 from . import openg2p_workflow
 from . import openg2p_task_api
 from . import openg2p_task_events_api
+from . import openg2p_tasks_widgets

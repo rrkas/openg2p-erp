@@ -1,3 +1,5 @@
+import json
+
 from odoo import models, fields, api
 
 
@@ -5,147 +7,139 @@ class Openg2pWorkflow(models.Model):
     _name = "openg2p.workflow"
     _description = "Workflows for OpenG2P Tasks"
 
-    # name = fields.Char(string="Workflow Name")
-
-    workflow_type = fields.Many2one("openg2p.workflow.type", string="Workflow type")
+    workflow_type = fields.Many2one(
+        "openg2p.workflow.type",
+        string="Workflow type",
+    )
 
     curr_workflow_stage = fields.Many2one(
-        "openg2p.workflow.stage", string="Current workflow stage"
+        comodel_name="openg2p.workflow.stage",
+        string="Current workflow stage",
+        readonly=True,
+        store=True,
     )
 
     workflow_completed = fields.Boolean(
-        string="Workflow completed",
+        string="Is workflow completed",
+        readonly=True,
+        store=True,
     )
 
-    workflow_context = fields.Text(
-        string="Context",
+    workflow_stage_count = fields.Integer(
+        string="Workflow Stage Count",
+        store=False,
+        compute='_compute_fields',
+    )
+    curr_workflow_stage_index = fields.Integer(
+        string="Current Workflow Stage Index",
+        store=False,
+        compute='_compute_fields',
+    )
+    # for storing technical details, JSONified dict for different stage details
+    context = fields.Text(
+        string="Context Details",
+        readonly=True,
+        store=True,
     )
 
-    def _update_context(self, event_code, obj, status):
-        pass
-
-    @api.model
-    def create(self, vals_list):
-        res = super().create(vals_list)
-        # subtype_obj = self.env["openg2p.task.subtype"].search(
-        #     [("id", "=", self.curr_workflow_stage.curr_task_subtype.id)]
-        # )[0]
-        self.env["openg2p.task"].create(
-            {
-                "type_id": 2,
-                "subtype_id": 5,
-                "entity_type_id": "odk.config",
-                "entity_id": 0,
-                "status_id": 2,
-                "workflow_id": res.id,
-                "target_url": "http://localhost:8069/web#action=288&model=odk.config&view_type=list&menu_id=207",
+    @api.onchange('workflow_type')
+    def onchange_workflow_type(self):
+        stages = self.env['openg2p.workflow.stage'].search([('id', 'in', self.workflow_type.stages.ids)])
+        if stages and len(stages) > 0:
+            self.workflow_stage_count = len(stages)
+            self.curr_workflow_stage = stages[0]
+            self.curr_workflow_stage_index = 1
+        return {
+            'domain': {
+                'curr_workflow_stage': [('id', 'in', self.workflow_type.stages.ids)],
             }
-        )
-        return res
+        }
+
+    def _compute_fields(self):
+        for rec in self:
+            rec.workflow_stage_count = len(rec.workflow_type.stages.ids)
+            if rec.curr_workflow_stage.id:
+                rec.curr_workflow_stage_index = rec.workflow_type.stages.ids.index(rec.curr_workflow_stage.id) + 1
+            if not rec.context:
+                rec.context = json.dumps({}, indent=2)
+
+    def get_id_from_ext_id(self, ext_id):
+        return self.env.ref(f'openg2p_task.{ext_id}').id
+
+    def get_ext_id_from_id(self, model, id):
+        res = self.env['ir.model.data'].search(['&', ('model', '=', model), ('res_id', '=', id)])
+        print(res)
+        if res and len(res) > 0:
+            return res[0].name
+        return None
+
+    def _update_context(self, event_code, obj):
+        context = json.loads(self.context)
+        if isinstance(obj, list):
+            ids = list(map(lambda x: x.id, obj))
+        else:
+            try:
+                ids = obj.ids
+            except:
+                ids = obj.id
+        context[event_code] = ids
+        self.context = json.dumps(context, indent=2)
+
+    def _update_task_list(self, task_id):
+        context = json.loads(self.context)
+        context['tasks'].append(task_id)
+        self.context = json.dumps(context)
+
+    def handle_intermediate_task(self):
+        task_code = self.get_ext_id_from_id('openg2p.task.subtype', self.curr_workflow_stage.id)
+        if task_code == 'task_subtype_regd_make_beneficiary':
+            # self.env['']
+            pass
 
     def name_get(self):
         for rec in self:
             yield rec.id, f"{rec.workflow_type.name} ({rec.id})"
 
-    # odk -> conv_ben -> ben_enroll -> batch
     def handle_tasks(self, event_code, obj):
-        task = self.env["openg2p.task"].search([("status_id", "=", 2)])
-        # create config
-        if event_code == 1:
-            task.write(
-                {
-                    "entity_id": obj.id,
-                    "status_id": 3,
-                    "target_url": f"http://localhost:8069/web#"
-                    f"id={task.entity_id}&"
-                    f"action=288&"
-                    f"model=odk.config&"
-                    f"view_type=list&menu_id=207",
-                }
-            )
-            self.env["openg2p.task"].create(
-                {
-                    "type_id": 2,
-                    "subtype_id": 7,
-                    "entity_type_id": "odk.config",
-                    "entity_id": 0,
+        subtype_id = self.get_id_from_ext_id(event_code)
+        task = self.env['openg2p.task'].search(['&', ('subtype_id', '=', subtype_id), ('status_id', '=', 2)])
+        if task and len(task) > 0:
+            task = task[0]
+            workflow = self.env['openg2p.workflow'].search([('id', '=', task.workflow_id)])
+            if workflow and len(workflow) > 0:
+                workflow = workflow[0]
+                assert isinstance(workflow, self.__class__)
+                workflow._update_context(event_code, obj)
+            task.status_id = 3
+            try:
+                workflow.curr_workflow_stage = workflow.workflow_type.states[
+                    workflow.curr_workflow_stage_index].task_subtype_id.id
+                while workflow.curr_workflow_stage.intermediate:
+                    workflow.handle_intermediate_task()
+                next_task = self.env['openg2p.task'].create({
+                    "subtype_id": workflow.curr_workflow_stage.task_subtype_id.id,
+                    "workflow_id": workflow.id,
                     "status_id": 2,
-                    "workflow_id": task.workflow_id,
-                    "target_url": "http://localhost:8069/web#action=288&model=odk.config&view_type=list&menu_id=207",
-                }
-            )
-        # pull odk
-        elif event_code == 2:
-            task.write(
-                {
-                    "entity_id": obj.id,
-                    "status_id": 3,
-                    "target_url": "http://localhost:8069/web#action=288&model=odk.config&view_type=list&menu_id=207",
-                }
-            )
-            self.env["openg2p.task"].create(
-                {
-                    "type_id": 3,
-                    "subtype_id": 11,
-                    "entity_type_id": "openg2p.registration",
-                    "entity_id": 0,
-                    "status_id": 2,
-                    "workflow_id": task.workflow_id,
-                    "target_url": "http://localhost:8069/web#action=184&model=openg2p.registration&view_type=kanban&menu_id=127",
-                }
-            )
-        # regd -> beneficiary
-        elif event_code == 3:
-            task.write(
-                {
-                    "entity_id": obj.id,
-                    "status_id": 3,
-                    "target_url": "http://localhost:8069/web#action=184&model=openg2p.registration&view_type=kanban&menu_id=127",
-                }
-            )
-            self.env["openg2p.task"].create(
-                {
-                    "type_id": 4,
-                    "subtype_id": 14,
-                    "entity_type_id": "openg2p.beneficiary",
-                    "entity_id": 0,
-                    "status_id": 2,
-                    "workflow_id": task.workflow_id,
-                    "target_url": "http://localhost:8069/web#action=155&model=openg2p.beneficiary&view_type=kanban&menu_id=111",
-                }
-            )
-        # enroll beneficiaries
-        elif event_code == 4:
-            task.write(
-                {
-                    "entity_id": obj.id,
-                    "status_id": 3,
-                    "target_url": "http://localhost:8069/web#action=155&model=openg2p.beneficiary&view_type=kanban&menu_id=111",
-                }
-            )
-            self.env["openg2p.task"].create(
-                {
-                    "type_id": 4,
-                    "subtype_id": 15,
-                    "entity_type_id": "openg2p.beneficiary",
-                    "entity_id": 0,
-                    "status_id": 2,
-                    "workflow_id": task.workflow_id,
-                    "target_url": "http://localhost:8069/web#action=155&model=openg2p.beneficiary&view_type=kanban&menu_id=111",
-                }
-            )
-        # workflow = self.env["openg2p.workflow"].search(
-        #     [("id", "=", task.workflow_id)]
-        # )
-        # workflow.write(
-        #     {
-        #         "curr_workflow_stage": workflow.curr_workflow_stage.id + 1,
-        #     }
-        # )
+                })
+                workflow._update_task_list(next_task.id)
+            except:
+                pass
 
-    def api_json(self):
-        return {
-            "workflow-type": self.workflow_type.id,
-            "current-workflow-stage": self.curr_workflow_stage.id,
-            "workflow-completed": self.workflow_completed,
-        }
+    @api.model
+    def create(self, vals_list):
+        res = super().create(vals_list)
+        task = self.env['openg2p.task'].create({
+            "subtype_id": res.curr_workflow_stage.task_subtype_id.id,
+            "workflow_id": res.id,
+            "status_id": 2,
+        })
+        res.context = json.dumps({
+            self.get_ext_id_from_id('openg2p.task.subtype', res.workflow_type.stages[0].task_subtype_id.id): None,
+            "tasks": [task.id],
+        }, indent=2)
+        return res
+
+    def write(self, vals):
+        if not self.context and vals.get('context') is None:
+            vals['context'] = json.dumps({}, indent=2)
+        return super().write(vals)

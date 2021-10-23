@@ -8,8 +8,12 @@ class Openg2pWorkflowType(models.Model):
     name = fields.Char(string="Workflow name")
 
     # list of stages to be followed
-    stages = fields.One2many(
-        "openg2p.workflow.stage", "workflow_type_id", string="Workflow stages"
+    stages = fields.Many2many(
+        comodel_name="openg2p.workflow.stage",
+        relation="openg2p_workflow_type_stage",
+        column1="workflow_type_id",
+        column2="workflow_stage_id",
+        string="Workflow stages",
     )
 
     stage_count = fields.Integer(
@@ -21,7 +25,7 @@ class Openg2pWorkflowType(models.Model):
 
     def name_get(self):
         for rec in self:
-            yield rec.id, f"{rec.name} ({rec.id})"
+            yield rec.id, f"{rec.name} (WT{rec.id})"
 
     @api.depends("stages")
     def _compute_stage_count(self):
@@ -31,6 +35,6 @@ class Openg2pWorkflowType(models.Model):
     def api_json(self):
         return {
             "name": self.name,
-            "stages": self.stages.id,
+            "stages": self.stages.ids,
             "number_of_stages": self.stage_count,
         }

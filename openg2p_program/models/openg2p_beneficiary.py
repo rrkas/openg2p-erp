@@ -31,12 +31,11 @@ class Beneficiary(models.Model):
     def program_enroll(
         self,
         program_id,
-        category_id,
+        category_id=None,
         date_start=fields.Date.today(),
         confirm=False,
         raise_error=True,
     ):
-        self.env["openg2p.workflow"].handle_tasks(4, self)
         # TODO smarter way to check and skip or notify if enrollment exists now it just fails + use savepoints
         regs = self.env["openg2p.program.enrollment"]
         for rec in self:
@@ -48,9 +47,6 @@ class Beneficiary(models.Model):
                     "date_start": date_start,
                 }
             )
-            # self.env["openg2p.task"].create_task_from_notification(
-            #     "beneficiary_enroll", rec.id
-            # )
         if confirm:
             regs.action_activate()
 

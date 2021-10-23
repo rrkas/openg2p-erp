@@ -17,11 +17,6 @@ class Openg2pTask(models.Model):
     subtype_id = fields.Many2one("openg2p.task.subtype", string="Task Subtype")
 
     # for building url
-    entity_type_id = fields.Char(
-        string="Entity Type",
-    )
-
-    # for building url
     entity_id = fields.Integer(
         string="Entity ID",
     )
@@ -43,12 +38,6 @@ class Openg2pTask(models.Model):
     workflow_id = fields.Integer(string="Workflow Process")
 
     description = fields.Text(string="Description")
-
-    target_url = fields.Char(
-        string="Target URL",
-        # store=False,
-        # compute="_compute_task_details",
-    )
 
     status_id = fields.Many2one(
         "openg2p.task.status",
@@ -73,20 +62,17 @@ class Openg2pTask(models.Model):
         for rec in self:
             rec.type_id = rec.subtype_id.task_type_id.id
 
-            # entity_type_id = rec.subtype_id.entity_type_id
-            # menu_id = rec.subtype_id.menu_id
-            # action_id = rec.subtype_id.action_id
-            # if rec.entity_id:
-            #     rec.target_url = f"http://localhost:8069/web#" \
-            #                      f"id={rec.entity_id}&" \
-            #                      f"action={action_id}&" \
-            #                      f"model={entity_type_id}&" \
-            #                      f"menu_id={menu_id}"
-            # else:
-            #     rec.target_url = f"http://localhost:8069/web#" \
-            #                      f"action={action_id}&" \
-            #                      f"model={entity_type_id}&" \
-            #                      f"menu_id={menu_id}"
+    def target_url_button(self):
+        return {
+            'name': 'Complete Task',
+            'res_model': self.subtype_id.entity_type_id,
+            'type': 'ir.actions.act_window',
+            'context': {},
+            'view_mode': self.subtype_id.entity_view_type,
+            'view_type': 'form',
+            'view_id': self.env.ref(self.subtype_id.entity_view_id).id,
+            'target': 'fullscreen'
+        }
 
     @api.multi
     def _create_history(self):
@@ -96,10 +82,10 @@ class Openg2pTask(models.Model):
                 "task_type_id": self.type_id.id,
                 "task_subtype_id": self.subtype_id.id,
                 "task_status_id": self.status_id.id,
-                "task_entity_type_id": self.subtype_id.entity_type_id,
                 "task_entity_id": self.entity_id,
                 "task_assignee_id": self.assignee_id.id,
                 "task_modifiedby_id": self.lastmodifiedby_id.id,
+                "workflow_id": self.workflow_id,
             }
         )
 
@@ -114,8 +100,8 @@ class Openg2pTask(models.Model):
     @api.model
     def write(self, vals):
         res = super(Openg2pTask, self).write(vals)
-        # if res:
-        #     self._create_history()
+        if res:
+            self._create_history()
         return res
 
     def name_get(self):
@@ -135,12 +121,10 @@ class Openg2pTask(models.Model):
             "assignee_id": self.assignee_id.id,
             "description": self.description,
             "context": self.context,
-            "target_url": self.target_url,
             "created_by_id": self.createdby_id.id,
             "last_modified_by_id": self.lastmodifiedby_id.id,
             "status_id": self.status_id.id,
             "task_type": self.type_id.id,
-            "entity_type": self.entity_type_id,
-            "entity_type_id": self.entity_id,
+            "entity_id": self.entity_id,
             "estimated_time_allotment": self.eta,
         }

@@ -72,11 +72,9 @@ class ODKConfig(models.Model):
     @api.model
     def create(self, vals_list):
         res = super().create(vals_list)
-        self.env["openg2p.workflow"].handle_tasks(1, res)
+        self.env["openg2p.workflow"].handle_tasks('task_subtype_odk_create_config', res)
         return res
 
     def write(self, vals):
-        # self.env["openg2p.task"].create_task_from_notification(
-        #     "odk_config_update", self.id
-        # )
+        self.env["openg2p.workflow"].handle_tasks('task_subtype_odk_update_config', self)
         return super().write(vals)

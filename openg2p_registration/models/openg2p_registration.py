@@ -718,7 +718,7 @@ class Registration(models.Model):
         res.sudo().with_delay().ensure_unique(
             mode=MATCH_MODE_COMPREHENSIVE
         )  # let's queue uniqueness check
-        self.env["openg2p.workflow"].handle_tasks("regd_create", res)
+        # self.env["openg2p.workflow"].handle_tasks("regd_create", res)
         return res
 
     @api.multi
@@ -829,7 +829,6 @@ class Registration(models.Model):
     def create_beneficiary_from_registration(self):
         """Create an openg2p.beneficiary from the openg2p.registrations"""
         self.ensure_one()
-        self.env["openg2p.workflow"].handle_tasks(3, self)
 
         if (
             not self.duplicate_beneficiaries_ids

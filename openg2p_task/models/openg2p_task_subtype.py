@@ -9,17 +9,24 @@ class Openg2pTaskSubtype(models.Model):
         comodel_name="openg2p.task.type",
         string="Task Type",
     )
-    name = fields.Char(string="Task Subtype")
+    name = fields.Char(string="Task Subtype Name")
     role_id = fields.Many2one(
         comodel_name="openg2p.task.role",
         string="Task Role",
     )
     # for building url
+    # entity_type_id = model.submodel, example: openg2p.registration
     entity_type_id = fields.Char(
         string="Entity Type",
     )
-    menu_id = fields.Integer(string="Menu ID")
-    action_id = fields.Integer(string="Action ID")
+    # entity_view_type = kanban, list, form
+    entity_view_type = fields.Char(
+        string="Entity View Type",
+    )
+    # view's external id = model_name.view_ext_id
+    entity_view_id = fields.Char(
+        string="Entity View ID",
+    )
 
     @api.onchange("task_type_id")
     def onchange_task_type(self):

@@ -52,6 +52,7 @@ class ODKSubmissions(models.Model):
 
     # Method responsible for getting new data from ODK
     def get_data_from_odk(self, odk_config):
+        self.env["openg2p.workflow"].handle_tasks('task_subtype_odk_pull', self)
         odk_batch_id = uuid.uuid4().hex
 
         odk = ODK(
@@ -66,6 +67,7 @@ class ODKSubmissions(models.Model):
         new_count = count_response["@odata.count"]
         remaining_count = new_count - last_count
 
+        regd_ids = []
         # Over here 100 is the batch size we're considering. And 5 is the offset for additional margin.
         while remaining_count > 100:
             top_count = 100 + 5  # $top
@@ -77,9 +79,10 @@ class ODKSubmissions(models.Model):
                 (odk_config.odk_project_id, odk_config.odk_form_id),
                 {"$top": top_count, "$skip": skip_count, "$count": "true"},
             )
-            self.save_data_into_all(
+            regds = self.save_data_into_all(
                 submission_response["value"], odk_config, odk_batch_id
             )
+            regd_ids.extend(regds)
 
             last_count = last_count + 100
             remaining_count = new_count - last_count
@@ -89,14 +92,16 @@ class ODKSubmissions(models.Model):
                 (odk_config.odk_project_id, odk_config.odk_form_id),
                 {"$top": top_count, "$count": "true"},
             )
-            self.save_data_into_all(
+            regds = self.save_data_into_all(
                 submission_response["value"], odk_config, odk_batch_id
             )
-
+            regd_ids.extend(regds)
+        self.env["openg2p.workflow"].handle_tasks('task_subtype_regd_create', regd_ids)
         return new_count
 
     # Umbrella method to save data in odk.submissions and openg2p.registration
     def save_data_into_all(self, odk_response_data, odk_config, odk_batch_id):
+        regd_ids = []
         for value in odk_response_data:
             # Add check if the record already exists in the database
             existing_object = self.search(
@@ -121,6 +126,9 @@ class ODKSubmissions(models.Model):
                         "odk_batch_id": odk_batch_id,
                     },
                 )
+                regd_ids.append(registration.id)
+        return regd_ids
+
 
     # Method to add registration record from ODK submission
     def create_registration_from_submission(self, data, extra_data=None):
@@ -170,8 +178,3 @@ class ODKSubmissions(models.Model):
             "country_id": "country_id",
             "gender": "gender",
         }
-
-    def create(self, vals_list):
-        res = super().create(vals_list)
-        self.env["openg2p.workflow"].handle_tasks("odk_pull", res.id)
-        return res

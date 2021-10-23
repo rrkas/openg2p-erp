@@ -15,7 +15,6 @@
                             <field name="description" string="Description"/>
                             <field name="context" string="Context"/>
                             <field name="workflow_id" string="Workflow Pid"/>
-                            <field name="target_url" string="Target URL"/>
                             <field name="assignee_id" string="Assignee"/>
                             <field name="lastmodifiedby_id" string="Last modified by"/>
                         </group>
@@ -56,7 +55,6 @@
                 <kanban default_group_by="status_id" class="o_kanban_registration" delete="0" import="0"
                         group_create="0" quick_create="false" group_edit="false" group_delete="false"
                         group_fold="false">
-                    <field name="target_url"/>
                     <field name="assignee_id"/>
                     <field name="status_id"/>
                     <progressbar field="status_id"
@@ -74,9 +72,6 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <field name="target_url" widget="url" text="Redirect there"/>
-                                    </div>
-                                    <div>
                                         Assigned to:
                                         <b>
                                             <field name="assignee_id"/>
@@ -84,6 +79,11 @@
                                     </div>
                                     <div>
                                         <field name="create_date"/>
+                                    </div>
+                                    <br />
+                                    <div>
+                                        <button name="target_url_button" type="object"
+                                                class="btn-primary">Complete Task</button>
                                     </div>
                                 </div>
                             </div>

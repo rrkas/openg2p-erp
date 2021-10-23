@@ -7,13 +7,21 @@
             <field name="name">openg2p.workflow.type.form</field>
             <field name="model">openg2p.workflow.type</field>
             <field name="arch" type="xml">
-                <form>
-                    <group>
+                <form create="0" edit="0" delete="0" import="0">
+                    <sheet>
                         <group>
-                            <field name="name" string="Name"/>
-                            <field name="stages" string="Stages"/>
+                            <group>
+                                <field name="name" string="Name"/>
+                                <field name="stages" string="Stages" widget="many2many"
+                                       options="{'no_quick_create':True,'no_create_edit':True,'no_create':True}">
+                                    <tree>
+                                        <field name="task_subtype_id"/>
+                                        <field name="intermediate"/>
+                                    </tree>
+                                </field>
+                            </group>
                         </group>
-                    </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -23,7 +31,7 @@
             <field name="name">openg2p.workflow.type.tree</field>
             <field name="model">openg2p.workflow.type</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree create="0" edit="0" delete="0" import="0">
                     <field name="name" string="Name"/>
                     <field name="stage_count" string="Number of Stages"/>
                 </tree>
@@ -35,7 +43,7 @@
             <field name="name">openg2p.workflow.type.kanban</field>
             <field name="model">openg2p.workflow.type</field>
             <field name="arch" type="xml">
-                <kanban class="o_kanban_registration">
+                <kanban class="o_kanban_registration" create="0" edit="0" delete="0" import="0">
                     <field name="name"/>
                     <field name="stage_count"/>
                     <templates>
@@ -46,7 +54,8 @@
                                         <field name="name"/>
                                     </div>
                                     <div>
-                                        <field name="stage_count"/> Stages
+                                        <field name="stage_count"/>
+                                        Stages
                                     </div>
                                 </div>
                             </div>

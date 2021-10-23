@@ -43,12 +43,6 @@
               parent="menu_openg2p_task_home"
               sequence="7"/>
 
-    <menuitem id="menu_openg2p_workflow_stage"
-              name="OpenG2P Workflow Stage"
-              action="action_openg2p_workflow_stage"
-              parent="menu_openg2p_workflow_options"
-              sequence="8"/>
-
     <menuitem id="menu_openg2p_workflow_type"
               name="OpenG2P Workflow Type"
               action="action_openg2p_workflow_type"
@@ -60,5 +54,30 @@
               action="action_openg2p_workflow"
               parent="menu_openg2p_workflow_options"
               sequence="10"/>
+
+    <menuitem id="menu_openg2p_custom_tasks"
+              name="Custom tasks"
+              parent="menu_openg2p_task_home"
+              sequence="11"/>
+
+    <menuitem id="menu_openg2p_task_regdchangestage"
+              name="Change stage of Registrations"
+              parent="menu_openg2p_custom_tasks"
+              action="action_openg2p_task_regdchangestage"
+              sequence="11"/>
+
+    <menuitem id="menu_openg2p_task_regd2bene"
+              name="Convert Registrations to Beneficiaries"
+              parent="menu_openg2p_custom_tasks"
+              action="action_openg2p_task_regd2bene"
+              sequence="11"/>
+
+    <menuitem id="menu_openg2p_task_enrollbene"
+              name="Enroll Beneficiaries into program"
+              parent="menu_openg2p_custom_tasks"
+              action="action_openg2p_task_enrollbene"
+              sequence="11"/>
+
+
 
 </odoo>

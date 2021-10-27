@@ -4,7 +4,8 @@
     <menuitem id="menu_openg2p_task_home"
               name="OpenG2P Task"
               action="action_openg2p_task"
-              sequence="1"/>
+              sequence="1"
+              web_icon="openg2p_task,static/description/icon.png" />
 
 
     <menuitem id="menu_openg2p_task_history"
@@ -36,24 +37,6 @@
               action="action_openg2p_task_subtype"
               parent="menu_openg2p_task_others"
               sequence="6"/>
-
-
-    <menuitem id="menu_openg2p_workflow_options"
-              name="Workflow Options"
-              parent="menu_openg2p_task_home"
-              sequence="7"/>
-
-    <menuitem id="menu_openg2p_workflow_type"
-              name="OpenG2P Workflow Type"
-              action="action_openg2p_workflow_type"
-              parent="menu_openg2p_workflow_options"
-              sequence="9"/>
-
-    <menuitem id="menu_openg2p_workflow"
-              name="OpenG2P Workflow"
-              action="action_openg2p_workflow"
-              parent="menu_openg2p_workflow_options"
-              sequence="10"/>
 
     <menuitem id="menu_openg2p_custom_tasks"
               name="Custom tasks"

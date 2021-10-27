@@ -29,7 +29,7 @@ class Openg2pTaskHistory(models.Model):
     task_entity_id = fields.Integer(
         string="Entity ID",
     )
-    workflow_id = fields.Integer(string="Workflow Process")
+    process_id = fields.Integer(string="Process")
     program_id = fields.Integer(
         string="Program",
     )

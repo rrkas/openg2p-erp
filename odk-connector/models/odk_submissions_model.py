@@ -33,7 +33,7 @@ class ODKSubmissions(models.Model):
 
     # Method to update/sync submissions from a specific config
     def update_submissions(self, odk_config):
-        updated_submissions_count = self.get_data_from_odk(odk_config)
+        updated_submissions_count, regd_ids = self.get_data_from_odk(odk_config)
 
         config = self.odk_update_configuration(
             {
@@ -43,6 +43,7 @@ class ODKSubmissions(models.Model):
             odk_config.id,
         )
         print("Successfully update config:", config)
+        return regd_ids
 
     def get_count_response(self, odk, odk_config):
         return odk.get(
@@ -52,7 +53,6 @@ class ODKSubmissions(models.Model):
 
     # Method responsible for getting new data from ODK
     def get_data_from_odk(self, odk_config):
-        self.env["openg2p.workflow"].handle_tasks('task_subtype_odk_pull', self)
         odk_batch_id = uuid.uuid4().hex
 
         odk = ODK(
@@ -96,8 +96,7 @@ class ODKSubmissions(models.Model):
                 submission_response["value"], odk_config, odk_batch_id
             )
             regd_ids.extend(regds)
-        self.env["openg2p.workflow"].handle_tasks('task_subtype_regd_create', regd_ids)
-        return new_count
+        return new_count, regd_ids
 
     # Umbrella method to save data in odk.submissions and openg2p.registration
     def save_data_into_all(self, odk_response_data, odk_config, odk_batch_id):
@@ -116,7 +115,12 @@ class ODKSubmissions(models.Model):
                 )
 
             else:
-                value.update({"odk_batch_id": odk_batch_id})
+                value.update(
+                    {
+                        "odk_batch_id": odk_batch_id,
+                        "program_ids": odk_config.program_ids.ids,
+                    }
+                )
                 registration = self.create_registration_from_submission(value)
                 self.odk_create_submissions_data(
                     value,
@@ -128,7 +132,6 @@ class ODKSubmissions(models.Model):
                 )
                 regd_ids.append(registration.id)
         return regd_ids
-
 
     # Method to add registration record from ODK submission
     def create_registration_from_submission(self, data, extra_data=None):

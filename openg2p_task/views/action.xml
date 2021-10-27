@@ -67,32 +67,6 @@
         </field>
     </record>
 
-    <record id="action_openg2p_workflow_type" model="ir.actions.act_window">
-        <field name="name">OpenG2P Workflow Type</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">openg2p.workflow.type</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,kanban,form</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                No workflow types yet!
-            </p>
-        </field>
-    </record>
-
-    <record id="action_openg2p_workflow" model="ir.actions.act_window">
-        <field name="name">OpenG2P Workflows</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">openg2p.workflow</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                No workflows yet!
-            </p>
-        </field>
-    </record>
-
     <record id="action_openg2p_task_regd2bene" model="ir.actions.act_window">
         <field name="name">Convert Registrations to Beneficiaries</field>
         <field name="type">ir.actions.act_window</field>

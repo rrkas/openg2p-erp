@@ -46,9 +46,12 @@ class BeneficiaryTransactionWizard(models.TransientModel):
 
     @api.multi
     def create_batch(self):
-        beneficiaries_selected = self.env["openg2p.beneficiary"].browse(
-            self.env.context.get("active_ids")
-        )
+        self.task_create_batch(self.env.context.get("active_ids"))
+        return {"type": "ir.actions.act_window_close"}
+
+    def task_create_batch(self, bene_ids):
+        batch_ids = []
+        beneficiaries_selected = self.env["openg2p.beneficiary"].browse(bene_ids)
         program_wise = {}
         for b in beneficiaries_selected:
             if not b.bank_account_number:
@@ -83,6 +86,7 @@ class BeneficiaryTransactionWizard(models.TransientModel):
                         "request_id": request_id,
                     }
                 )
+                batch_ids.append(batch.id)
 
                 for b in beneficiaries_list:
                     bank_id = self._get_bank_id(b)
@@ -104,4 +108,3 @@ class BeneficiaryTransactionWizard(models.TransientModel):
                     )
                     m.generate_uuid()
                 count += 1000
-        return {"type": "ir.actions.act_window_close"}

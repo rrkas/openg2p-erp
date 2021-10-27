@@ -14,7 +14,7 @@
                             <field name="subtype_id" string="Task Subtype"/>
                             <field name="description" string="Description"/>
                             <field name="context" string="Context"/>
-                            <field name="workflow_id" string="Workflow Pid"/>
+                            <field name="process_id" string="process Pid"/>
                             <field name="assignee_id" string="Assignee"/>
                             <field name="lastmodifiedby_id" string="Last modified by"/>
                         </group>

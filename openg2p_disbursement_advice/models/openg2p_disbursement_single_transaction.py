@@ -175,16 +175,3 @@ class SingleTransaction(models.Model):
         for rec in self:
             if not rec.request_id:
                 rec.request_id = uuid.uuid4().hex
-
-    def create(self, vals_list):
-        res = super().create(vals_list)
-        # self.env["openg2p.task"].create_task_from_notification(
-        #     "beneficiary_transaction_single_create", res.id
-        # )
-        return res
-
-    def write(self, vals):
-        # self.env["openg2p.task"].create_task_from_notification(
-        #     "beneficiary_transaction_single_update", self.id
-        # )
-        return super().write(vals)

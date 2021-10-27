@@ -1,19 +1,19 @@
 from odoo import models, fields, api
 
 
-class Openg2pWorkflowType(models.Model):
-    _name = "openg2p.workflow.type"
-    _description = "Workflow type for OpenG2P Tasks"
+class Openg2pProcessType(models.Model):
+    _name = "openg2p.process.type"
+    _description = "Process type for OpenG2P Tasks"
 
-    name = fields.Char(string="Workflow name")
+    name = fields.Char(string="Process name")
 
     # list of stages to be followed
     stages = fields.Many2many(
-        comodel_name="openg2p.workflow.stage",
-        relation="openg2p_workflow_type_stage",
-        column1="workflow_type_id",
-        column2="workflow_stage_id",
-        string="Workflow stages",
+        comodel_name="openg2p.process.stage",
+        relation="openg2p_process_type_stage",
+        column1="process_type_id",
+        column2="process_stage_id",
+        string="Process stages",
     )
 
     stage_count = fields.Integer(

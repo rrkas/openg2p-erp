@@ -706,7 +706,6 @@ class Beneficiary(models.Model):
             vals["phone"] = vals.get("mobile")
         self._partner_create(vals)
         res = super(Beneficiary, self).create(vals)
-        self.env["openg2p.workflow"].handle_tasks("ben_create", res)
         return res
 
     @api.multi
@@ -715,9 +714,6 @@ class Beneficiary(models.Model):
         res = super(Beneficiary, self).write(vals)
         for i in self:
             i._partner_update(vals)
-        # self.env["openg2p.task"].create_task_from_notification(
-        #     "beneficiary_update", self.id
-        # )
         return res
 
     @api.onchange("country_id")

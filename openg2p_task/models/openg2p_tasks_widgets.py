@@ -15,7 +15,7 @@ class RegistrationsToBeneficiariesWizard(models.TransientModel):
             ("all", "All not yet converted"),
             ("registering_stage", "Registrations in Registering stage"),
         ),
-        default='all',
+        default="all",
         required=True,
     )
     total_record_count = fields.Integer(
@@ -27,18 +27,20 @@ class RegistrationsToBeneficiariesWizard(models.TransientModel):
         readonly=True,
     )
 
-    @api.onchange('options')
+    @api.onchange("options")
     def _compute_selected_fields(self):
         self.selected_record_count = len(self._records(self.options))
         if not self.total_record_count:
-            self.total_record_count = len(self._records('all'))
+            self.total_record_count = len(self._records("all"))
 
     def _records(self, option):
         regd_obj = self.env["openg2p.registration"]
         if option == "all":
             regds = regd_obj.search([("beneficiary_id", "=", False)])
         elif option == "registering_stage":
-            regds = regd_obj.search(['&', ("stage_id", "=", 6), ("beneficiary_id", "=", False)])
+            regds = regd_obj.search(
+                ["&", ("stage_id", "=", 6), ("beneficiary_id", "=", False)]
+            )
         else:
             regds = []
         return regds
@@ -56,38 +58,38 @@ class RegistrationsToBeneficiariesWizard(models.TransientModel):
             asyncio.run(regd2bene(regd))
 
     def btn_regd_list(self):
-        view_id = self.env.ref('openg2p_registration.crm_case_tree_view_beneficiary').id
+        view_id = self.env.ref("openg2p_registration.crm_case_tree_view_beneficiary").id
         context = self._context.copy()
         return {
-            'name': 'Registrations',
-            'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(view_id, 'tree')],
-            'res_model': 'openg2p.registration',
-            'view_id': view_id,
-            'type': 'ir.actions.act_window',
-            'target': 'current',
-            'context': context,
+            "name": "Registrations",
+            "view_type": "form",
+            "view_mode": "tree",
+            "views": [(view_id, "tree")],
+            "res_model": "openg2p.registration",
+            "view_id": view_id,
+            "type": "ir.actions.act_window",
+            "target": "current",
+            "context": context,
         }
 
     def btn_bene_list(self):
-        view_id = self.env.ref('openg2p.view_beneficiary_tree').id
+        view_id = self.env.ref("openg2p.view_beneficiary_tree").id
         context = self._context.copy()
         return {
-            'name': 'Beneficiaries',
-            'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(view_id, 'tree')],
-            'res_model': 'openg2p.beneficiary',
-            'view_id': view_id,
-            'type': 'ir.actions.act_window',
-            'target': 'current',
-            'context': context,
+            "name": "Beneficiaries",
+            "view_type": "form",
+            "view_mode": "tree",
+            "views": [(view_id, "tree")],
+            "res_model": "openg2p.beneficiary",
+            "view_id": view_id,
+            "type": "ir.actions.act_window",
+            "target": "current",
+            "context": context,
         }
 
 
 class EnrollBeneficiariesIntoProgramWidget(models.TransientModel):
-    _name = 'openg2p.task.enrollbene.widget'
+    _name = "openg2p.task.enrollbene.widget"
 
     options = fields.Selection(
         string="Options",
@@ -95,7 +97,7 @@ class EnrollBeneficiariesIntoProgramWidget(models.TransientModel):
             ("all", "All"),
             ("unenrolled", "Beneficiaries not enrolled yet"),
         ),
-        default='all',
+        default="all",
         required=True,
     )
     total_record_count = fields.Integer(
@@ -118,11 +120,11 @@ class EnrollBeneficiariesIntoProgramWidget(models.TransientModel):
         states={"draft": [("readonly", False)]},
     )
 
-    @api.onchange('options')
+    @api.onchange("options")
     def _compute_selected_fields(self):
         self.selected_record_count = len(self._records(self.options))
         if not self.total_record_count:
-            self.total_record_count = len(self._records('all'))
+            self.total_record_count = len(self._records("all"))
 
     def _records(self, option):
         beneficiary_obj = self.env["openg2p.beneficiary"]
@@ -130,7 +132,11 @@ class EnrollBeneficiariesIntoProgramWidget(models.TransientModel):
             beneficiaries = beneficiary_obj.search([])
         elif option == "unenrolled":
             beneficiaries = beneficiary_obj.search([])
-            beneficiaries = list(filter(lambda b: self.program_id.id not in b.program_ids.ids, beneficiaries))
+            beneficiaries = list(
+                filter(
+                    lambda b: self.program_id.id not in b.program_ids.ids, beneficiaries
+                )
+            )
         else:
             beneficiaries = []
         return beneficiaries
@@ -138,7 +144,9 @@ class EnrollBeneficiariesIntoProgramWidget(models.TransientModel):
     def enroll(self):
         async def enroll_bene(ben):
             try:
-                ben.program_enroll(self.program_id.id, date_start=self.date_start, confirm=True)
+                ben.program_enroll(
+                    self.program_id.id, date_start=self.date_start, confirm=True
+                )
             except BaseException as e:
                 print(e)
                 raise ValidationError(e)
@@ -147,38 +155,38 @@ class EnrollBeneficiariesIntoProgramWidget(models.TransientModel):
             asyncio.run(enroll_bene(b))
 
     def btn_prog_list(self):
-        view_id = self.env.ref('openg2p_program.view_program').id
+        view_id = self.env.ref("openg2p_program.view_program").id
         context = self._context.copy()
         return {
-            'name': 'Programs',
-            'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(view_id, 'tree')],
-            'res_model': 'openg2p.program',
-            'view_id': view_id,
-            'type': 'ir.actions.act_window',
-            'target': 'current',
-            'context': context,
+            "name": "Programs",
+            "view_type": "form",
+            "view_mode": "tree",
+            "views": [(view_id, "tree")],
+            "res_model": "openg2p.program",
+            "view_id": view_id,
+            "type": "ir.actions.act_window",
+            "target": "current",
+            "context": context,
         }
 
     def btn_bene_list(self):
-        view_id = self.env.ref('openg2p.view_beneficiary_tree').id
+        view_id = self.env.ref("openg2p.view_beneficiary_tree").id
         context = self._context.copy()
         return {
-            'name': 'Beneficiaries',
-            'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(view_id, 'tree')],
-            'res_model': 'openg2p.beneficiary',
-            'view_id': view_id,
-            'type': 'ir.actions.act_window',
-            'target': 'current',
-            'context': context,
+            "name": "Beneficiaries",
+            "view_type": "form",
+            "view_mode": "tree",
+            "views": [(view_id, "tree")],
+            "res_model": "openg2p.beneficiary",
+            "view_id": view_id,
+            "type": "ir.actions.act_window",
+            "target": "current",
+            "context": context,
         }
 
 
 class ChangeStateRegistrationWidget(models.TransientModel):
-    _name = 'openg2p.task.regdchangestage.widget'
+    _name = "openg2p.task.regdchangestage.widget"
 
     src_stage_id = fields.Many2one(
         "openg2p.registration.stage",
@@ -197,11 +205,11 @@ class ChangeStateRegistrationWidget(models.TransientModel):
         "Target Stage",
     )
 
-    @api.onchange('src_stage_id')
+    @api.onchange("src_stage_id")
     def _compute_selected_fields(self):
         self.selected_record_count = len(self._records())
         if not self.total_record_count:
-            self.total_record_count = len(self._records('all'))
+            self.total_record_count = len(self._records("all"))
 
     def _records(self, option="by_stage_id"):
         regd_obj = self.env["openg2p.registration"]
@@ -234,16 +242,16 @@ class ChangeStateRegistrationWidget(models.TransientModel):
         print(temp)
 
     def btn_regd_list(self):
-        view_id = self.env.ref('openg2p_registration.crm_case_tree_view_beneficiary').id
+        view_id = self.env.ref("openg2p_registration.crm_case_tree_view_beneficiary").id
         context = self._context.copy()
         return {
-            'name': 'Registrations',
-            'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(view_id, 'tree')],
-            'res_model': 'openg2p.registration',
-            'view_id': view_id,
-            'type': 'ir.actions.act_window',
-            'target': 'current',
-            'context': context,
+            "name": "Registrations",
+            "view_type": "form",
+            "view_mode": "tree",
+            "views": [(view_id, "tree")],
+            "res_model": "openg2p.registration",
+            "view_id": view_id,
+            "type": "ir.actions.act_window",
+            "target": "current",
+            "context": context,
         }

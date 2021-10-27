@@ -166,7 +166,6 @@ class BatchTransaction(models.Model):
             if not rec.request_id:
                 rec.request_id = uuid.uuid4().hex
 
-
     def create_bulk_transfer(self):
         self._generate_uuid()
 
@@ -329,16 +328,3 @@ class BatchTransaction(models.Model):
             return res
         except BaseException as e:
             return e
-
-    def create(self, vals_list):
-        res = super().create(vals_list)
-        # self.env["openg2p.task"].create_task_from_notification(
-        #     "beneficiary_transaction_batch_create", res.id
-        # )
-        return res
-
-    def write(self, vals):
-        # self.env["openg2p.task"].create_task_from_notification(
-        #     "beneficiary_transaction_batch_update", self.id
-        # )
-        return super().write(vals)

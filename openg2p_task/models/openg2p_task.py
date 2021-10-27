@@ -35,7 +35,7 @@ class Openg2pTask(models.Model):
         default=lambda self: self.env.uid,
     )
 
-    workflow_id = fields.Integer(string="Workflow Process")
+    process_id = fields.Integer(string="Process")
 
     description = fields.Text(string="Description")
 
@@ -64,14 +64,14 @@ class Openg2pTask(models.Model):
 
     def target_url_button(self):
         return {
-            'name': 'Complete Task',
-            'res_model': self.subtype_id.entity_type_id,
-            'type': 'ir.actions.act_window',
-            'context': {},
-            'view_mode': self.subtype_id.entity_view_type,
-            'view_type': 'form',
-            'view_id': self.env.ref(self.subtype_id.entity_view_id).id,
-            'target': 'fullscreen'
+            "name": "Complete Task",
+            "res_model": self.subtype_id.entity_type_id,
+            "type": "ir.actions.act_window",
+            "context": {},
+            "view_mode": self.subtype_id.entity_view_type,
+            "view_type": "form",
+            "view_id": self.env.ref(self.subtype_id.entity_view_id).id,
+            "target": "fullscreen",
         }
 
     @api.multi
@@ -85,7 +85,7 @@ class Openg2pTask(models.Model):
                 "task_entity_id": self.entity_id,
                 "task_assignee_id": self.assignee_id.id,
                 "task_modifiedby_id": self.lastmodifiedby_id.id,
-                "workflow_id": self.workflow_id,
+                "process_id": self.process_id,
             }
         )
 

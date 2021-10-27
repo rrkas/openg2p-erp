@@ -718,7 +718,6 @@ class Registration(models.Model):
         res.sudo().with_delay().ensure_unique(
             mode=MATCH_MODE_COMPREHENSIVE
         )  # let's queue uniqueness check
-        # self.env["openg2p.workflow"].handle_tasks("regd_create", res)
         return res
 
     @api.multi
@@ -771,7 +770,6 @@ class Registration(models.Model):
                 res = super(Registration, self).write(vals)
         else:
             res = super(Registration, self).write(vals)
-        # self.env["openg2p.task"].create_task_from_notification("regd_update", self.id)
         return res
 
     @api.multi
@@ -868,6 +866,7 @@ class Registration(models.Model):
             "emergency_contact": self.emergency_contact,
             "emergency_phone": self.emergency_phone,
             "odk_batch_id": self.odk_batch_id,
+            "program_ids": self.program_ids.ids,
         }
         beneficiary = self.env["openg2p.beneficiary"].create(data)
         org_fields = self.env["openg2p.registration.orgmap"].search(
@@ -1070,6 +1069,11 @@ class Registration(models.Model):
             elif isinstance(value, dict):
                 self.del_none(value)
         return d
+
+    def task_convert_registration_to_beneficiary(self):
+        self.stage_id = 6
+        self.active = False
+        return self.create_beneficiary_from_registration()["res_id"]
 
     @api.multi
     def archive_registration(self):

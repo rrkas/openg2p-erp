@@ -84,7 +84,7 @@ class Openg2pTaskApi(Controller):
 
     @route("/process/<int:id>", type="json", auth="user", methods=["GET"])
     def get_tasks_by_process(self, id):
-        tasks = request.env["openg2p.task"].search([("workflow_id", "=", id)])
+        tasks = request.env["openg2p.task"].search([("process_id", "=", id)])
 
         try:
             if len(tasks) > 0:
@@ -93,14 +93,14 @@ class Openg2pTaskApi(Controller):
                     "status": 200,
                     "message": "Success",
                     "task_count": len(tasks),
-                    "workflow process": id,
+                    "process": id,
                     "task details": tasks,
                 }
             else:
                 return {
                     "status": 404,
-                    "workflow process": id,
-                    "error": f"Error ! No task by the workflow process {id} exists",
+                    "process": id,
+                    "error": f"Error ! No task by the process {id} exists",
                 }
         except BaseException as e:
             return {"status": 400, "id": id, "error": str(e)}
